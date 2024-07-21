@@ -54,5 +54,13 @@ public class UserRepositoryImpl implements UserRepository{
         }
     }
 
+    @Override
+    public User create(User user) {
+            try (Session session = sessionFactory.openSession()) {
+                session.persist(user);
+            }
+            return user;
+    }
+
 
 }

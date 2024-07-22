@@ -23,7 +23,7 @@ public class Post {
 
     @JsonIgnore
     @ManyToOne
-    @Column(name = "creator")
+    @JoinColumn(name = "createdby_id")
     private User creator;
 
     @Column(name = "creation_date")

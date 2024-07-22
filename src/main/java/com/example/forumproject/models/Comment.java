@@ -8,6 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "comments")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -16,10 +17,10 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "creator")
+//    @Column(name = "creator")
     @ManyToOne
-    @JoinColumn(name = "id")
-    private User creator;
+    @JoinColumn(name = "createdby_id")
+    private User createdBy;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -29,9 +30,9 @@ public class Comment {
         this.creationDate = LocalDateTime.now();
     }
 
-    @Column(name = "post_id")
+//    @Column(name = "post_id")
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "post_id")
     private Post post;
 
     public Comment() {
@@ -58,12 +59,12 @@ public class Comment {
         this.content = content;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatedBy(User creator) {
+        this.createdBy = createdBy;
     }
 
     public LocalDateTime getCreationDate() {
@@ -87,12 +88,14 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return id == comment.id && Objects.equals(content, comment.content) && Objects.equals(creator, comment.creator) && Objects.equals(creationDate, comment.creationDate);
+        return id == comment.id && Objects.equals(content, comment.content) &&
+                Objects.equals(createdBy, comment.createdBy) &&
+                Objects.equals(creationDate, comment.creationDate) && Objects.equals(post, comment.post);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, creator, creationDate);
+        return Objects.hash(id, content, createdBy, creationDate, post);
     }
 }
 

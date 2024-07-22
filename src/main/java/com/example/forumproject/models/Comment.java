@@ -29,6 +29,11 @@ public class Comment {
         this.creationDate = LocalDateTime.now();
     }
 
+    @Column(name = "post_id")
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Post post;
+
     public Comment() {
     }
 
@@ -67,6 +72,14 @@ public class Comment {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     @Override

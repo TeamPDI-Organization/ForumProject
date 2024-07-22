@@ -1,7 +1,6 @@
 package com.example.forumproject.repositories;
 
 import com.example.forumproject.models.Post;
-import com.example.forumproject.models.User;
 
 import java.util.List;
 

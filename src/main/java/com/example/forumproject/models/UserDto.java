@@ -1,7 +1,5 @@
 package com.example.forumproject.models;
 
-import jakarta.persistence.Column;
-
 public class UserDto {
     public UserDto(String username, String password, String firstName, String lastName, String email) {
         this.username = username;

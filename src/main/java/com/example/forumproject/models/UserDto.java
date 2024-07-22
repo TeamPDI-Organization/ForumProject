@@ -1,5 +1,9 @@
 package com.example.forumproject.models;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.checkerframework.common.aliasing.qual.Unique;
+
 public class UserDto {
     public UserDto(String username, String password, String firstName, String lastName, String email) {
         this.username = username;
@@ -8,7 +12,8 @@ public class UserDto {
         this.lastName = lastName;
         this.email = email;
     }
-
+    @NotNull
+    @Size(min = 4, max = 32, message = "Username should be between 4 and 32 symbols")
     private String username;
 
     private String password;
@@ -16,7 +21,7 @@ public class UserDto {
     private String firstName;
 
     private String lastName;
-
+    @Unique
     private String email;
 
     public String getUsername() {

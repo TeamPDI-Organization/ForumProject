@@ -13,4 +13,6 @@ public interface CommentRepository {
     void update(Comment comment);
 
     void delete(int id);
+
+    Comment getById(int id);
 }

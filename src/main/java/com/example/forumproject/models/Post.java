@@ -22,7 +22,7 @@ public class Post {
     private String content;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
     private User creator;
 

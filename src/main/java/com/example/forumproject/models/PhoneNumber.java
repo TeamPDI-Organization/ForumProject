@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Size;
 public class PhoneNumber {
 
     @Id
-    @OneToOne
-    @JoinColumn(name = "admin_id")
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "phone_number")

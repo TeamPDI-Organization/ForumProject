@@ -56,10 +56,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public void delete(int id, User user) {
         User existingUser = userRepository.getById(id);
-        if (!(user.isAdmin() || user.isModerator() || existingUser.equals(user))) {
+        if (!(user.isAdmin() || existingUser.equals(user))) {
             throw new AuthorizationException("Only admin or the user themselves can delete the user.");
         }
 
         userRepository.delete(id);
+    }
+
+    @Override
+    public User update(int id, User user2) {
+        return null;
     }
 }

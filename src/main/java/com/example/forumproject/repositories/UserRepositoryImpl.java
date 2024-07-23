@@ -71,11 +71,9 @@ public class UserRepositoryImpl implements UserRepository{
             if (user == null) {
                 throw new EntityNotFoundException("User", id);
             }
-            session.delete(user);
+            session.remove(user);
             session.getTransaction().commit();
 
         }
-
-
     }
 }

@@ -65,21 +65,20 @@ public class UserController {
         }
     }
 
-//    @PutMapping("/{id}")
-//    public User update(@RequestHeader HttpHeaders headers, int id, @Valid @RequestBody UserDto userDto) {
-//        try {
-//            User user = authenticationHelper.tryGetUser(headers);
-//            User user2 = userMapper.fromDto(id, userDto);
-//            service.update(id, user);
-//            return user2;
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        } catch (EntityDuplicateException e) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-//        } catch (AuthorizationException e) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-//        }
-//    }
+    @PutMapping("/{id}")
+    public User update(@RequestHeader HttpHeaders headers,@PathVariable int id, @Valid @RequestBody UserDto userDto) {
+        try {
+            User user = authenticationHelper.tryGetUser(headers);
+            User user2 = userMapper.fromDto(id, userDto);
+            return userService.update(id, user2);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (EntityDuplicateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
 //
     @DeleteMapping("/{id}")
     public void delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {

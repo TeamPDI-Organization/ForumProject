@@ -15,4 +15,6 @@ public interface UserRepository {
     User create(User user);
 
     void delete(int id);
+
+    User update(User user);
 }

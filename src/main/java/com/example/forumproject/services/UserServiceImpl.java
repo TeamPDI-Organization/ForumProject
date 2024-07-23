@@ -62,4 +62,27 @@ public class UserServiceImpl implements UserService{
 
         userRepository.delete(id);
     }
+
+    @Override
+    public User update(User user, User currentUser) {
+        if (!currentUser.isAdmin() || currentUser.getId() != user.getId()) {
+            throw new AuthorizationException("Only admin or the user themselves can update the user.");
+        }
+
+        boolean duplicateExists = true;
+        try {
+            User existingUser = userRepository.getByUsername(user.getUsername());
+            if (existingUser.getId() == user.getId()) {
+                duplicateExists = false;
+            }
+        } catch (EntityNotFoundException e) {
+            duplicateExists = false;
+        }
+
+        if (duplicateExists) {
+            throw new EntityDuplicateException("User", "username", user.getUsername());
+        }
+
+        return userRepository.update(user);
+    }
 }

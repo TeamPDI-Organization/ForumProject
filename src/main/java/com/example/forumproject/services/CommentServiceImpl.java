@@ -5,6 +5,8 @@ import com.example.forumproject.repositories.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentServiceImpl implements CommentService{
     private CommentRepository commentRepository;
@@ -14,7 +16,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public Comment getById(int id) {
+    public List<Comment> getById(int id) {
         return commentRepository.getById(id);
     }
 }

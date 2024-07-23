@@ -5,6 +5,7 @@ import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.Post;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,8 +21,17 @@ public class CommentRepositoryImpl implements CommentRepository {
 
 
     @Override
-    public List<Comment> getAll() {
-        return List.of();
+    public List<Comment> getById(int id) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Comment> query = session.createQuery("from Comment where createdBy = :id", Comment.class);
+            query.setParameter("id", id);
+            List<Comment> comments = query.list();
+            if (comments.isEmpty()) {
+                throw new EntityNotFoundException("Comments", id);
+            }
+
+            return comments;
+        }
     }
 
     @Override
@@ -37,17 +47,5 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public void delete(int id) {
 
-    }
-
-    @Override
-    public Comment getById(int id) {
-        try (Session session = sessionFactory.openSession()) {
-            Comment comment = session.get(Comment.class, id);
-            if (comment == null) {
-                throw new EntityNotFoundException("Comment", id);
-            }
-
-            return comment;
-        }
     }
 }

@@ -6,13 +6,11 @@ import java.util.List;
 
 public interface CommentRepository {
 
-    List<Comment> getAll();
+    List<Comment> getById(int id);
 
     void create(Comment comment);
 
     void update(Comment comment);
 
     void delete(int id);
-
-    Comment getById(int id);
 }

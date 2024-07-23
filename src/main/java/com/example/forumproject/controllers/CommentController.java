@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -22,7 +24,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public Comment getComment(@PathVariable int id) {
+    public List<Comment> getComment(@PathVariable int id) {
         try {
             return commentService.getById(id);
         } catch (EntityNotFoundException e) {

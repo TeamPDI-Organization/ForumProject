@@ -3,6 +3,8 @@ package com.example.forumproject.services;
 import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.Post;
 
+import java.util.List;
+
 public interface CommentService {
-    Comment getById(int id);
+    List<Comment> getById(int id);
 }

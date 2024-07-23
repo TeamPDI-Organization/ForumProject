@@ -18,7 +18,7 @@ public class Comment {
     private String content;
 
 //    @Column(name = "creator")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
     private User createdBy;
 

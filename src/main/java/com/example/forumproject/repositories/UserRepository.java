@@ -13,4 +13,6 @@ public interface UserRepository {
     User getByUsername(String username);
 
     User create(User user);
+
+    void delete(int id);
 }

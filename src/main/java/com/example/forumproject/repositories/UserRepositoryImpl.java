@@ -140,9 +140,6 @@ public class UserRepositoryImpl implements UserRepository{
     public PhoneNumber getPhoneNumber(int userId) {
         try (Session session = sessionFactory.openSession()) {
             PhoneNumber phoneNumber = session.get(PhoneNumber.class, userId);
-//            if (phoneNumber == null) {
-//                throw new EntityNotFoundException("PhoneNumber", userId);
-//            }
 
             return phoneNumber;
         }

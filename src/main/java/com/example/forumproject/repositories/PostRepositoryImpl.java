@@ -2,6 +2,7 @@ package com.example.forumproject.repositories;
 
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.models.FilterOptions;
 import com.example.forumproject.models.Like;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
@@ -11,7 +12,10 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
@@ -24,19 +28,75 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getPosts() {
-        return List.of();
+    public List<Post> getPosts(FilterOptions filterOptions) {
+        try (Session session = sessionFactory.openSession()) {
+            StringBuilder queryBuilder = new StringBuilder("From Post");
+            ArrayList<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+
+            filterOptions.getTitle().ifPresent(value -> {
+                filters.add(" title like :title ");
+                params.put("title", String.format("%%%s%%", value));
+            });
+
+            if (!filters.isEmpty()) {
+                queryBuilder.append(" WHERE ")
+                        .append(String.join("AND", filters));
+            }
+
+            queryBuilder.append(createOrderBy(filterOptions));
+            Query<Post> query = session.createQuery(queryBuilder.toString(), Post.class);
+            query.setProperties(params);
+
+            return query.list();
+        }
+    }
+
+    private String createOrderBy(FilterOptions filterOptions) {
+        String orderBy = "";
+        if (!filterOptions.getSortBy().isEmpty()) {
+            switch (filterOptions.getSortBy().get()) {
+                case "title":
+                    orderBy = "title";
+                    break;
+                case "likes":
+                    orderBy = "likes";
+                    break;
+            }
+            orderBy = String.format(" order by %s", orderBy);
+
+            if (filterOptions.getSortOrder().isPresent()
+                    && filterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
+                orderBy = String.format("%s DESC", orderBy);
+            }
+        }
+        return orderBy;
     }
 
     @Override
-    public Post getById(int id) {
+    public List<Post> getByUserId(int id) {
         try (Session session = sessionFactory.openSession()) {
-            Post post = session.get(Post.class, id);
-            if (post == null) {
-                throw new EntityNotFoundException("Post", id);
+            Query<Post> query = session.createQuery("from Post where createdBy = :id", Post.class);
+            query.setParameter("id", id);
+            List<Post> posts = query.list();
+            if (posts.isEmpty()) {
+                throw new EntityNotFoundException("Posts", id);
             }
 
-            return post;
+            return posts;
+        }
+    }
+
+    @Override
+    public Post getPostById(int postId) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Post> query = session.createQuery("from Post where id = :id", Post.class);
+            query.setParameter("id", postId);
+            List<Post> posts = query.list();
+            if (posts == null) {
+                throw new EntityNotFoundException("Posts", postId);
+            }
+            return posts.get(0);
         }
     }
 
@@ -72,7 +132,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public void delete(int id) {
-        Post postToDelete = getById(id);
+        Post postToDelete = getPostById(id);
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.remove(postToDelete);
@@ -83,7 +143,8 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post addLike(Post post, User user) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Like> query = session.createQuery("from Like where post =: postId and user = :userId", Like.class);
+            Query<Like> query = session.createQuery("from Like where post =: postId and user = :userId",
+                    Like.class);
             query.setParameter("postId", post.getId());
             query.setParameter("userId", user.getId());
 
@@ -105,7 +166,8 @@ public class PostRepositoryImpl implements PostRepository {
     public List<Post> getTopCommentedPosts() {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery(
-                            "select p from Post p left join p.comments c group by p.id order by count(c) desc", Post.class)
+                            "select p from Post p " +
+                                    "left join p.comments c group by p.id order by count(c) desc", Post.class)
                     .setMaxResults(10)
                     .list();
         }

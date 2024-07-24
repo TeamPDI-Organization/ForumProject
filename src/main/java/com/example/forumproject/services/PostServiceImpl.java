@@ -3,6 +3,7 @@ package com.example.forumproject.services;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.models.FilterOptions;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 import com.example.forumproject.repositories.PostRepository;
@@ -25,13 +26,18 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public List<Post> getPosts() {
-        return List.of();
+    public List<Post> getPosts(FilterOptions filterOptions) {
+        return postRepository.getPosts(filterOptions);
     }
 
     @Override
-    public Post getById(int id) {
-        return postRepository.getById(id);
+    public List<Post> getByUserId(int id) {
+        return postRepository.getByUserId(id);
+    }
+
+    @Override
+    public Post getPostById(int postId) {
+        return postRepository.getPostById(postId);
     }
 
     @Override
@@ -53,7 +59,7 @@ public class PostServiceImpl implements PostService {
             throw new EntityDuplicateException("Post", "title", post.getTitle());
         }
 
-        post.setCreator(user);
+        post.setCreatedBy(user);
         postRepository.create(post);
     }
 
@@ -100,8 +106,8 @@ public class PostServiceImpl implements PostService {
     }
 
     private void checkModifyPermissions(int postId, User user) {
-        Post post = postRepository.getById(postId);
-        if (!(user.isAdmin() || user.isModerator() || post.getCreator().equals(user))) {
+        Post post = postRepository.getPostById(postId);
+        if (!(user.isAdmin() || user.isModerator() || post.getCreatedBy().equals(user))) {
             throw new AuthorizationException(MODIFY_POST_ERROR_MESSAGE);
         }
     }

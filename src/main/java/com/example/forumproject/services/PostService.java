@@ -1,5 +1,6 @@
 package com.example.forumproject.services;
 
+import com.example.forumproject.models.FilterOptions;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 
@@ -7,9 +8,11 @@ import java.util.List;
 
 public interface PostService {
 
-    List<Post> getPosts();
+    List<Post> getPosts(FilterOptions filterOptions);
 
-    Post getById(int id);
+    List<Post> getByUserId(int userId);
+
+    Post getPostById(int postId);
 
     Post getByTitle(String title);
 

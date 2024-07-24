@@ -5,6 +5,7 @@ import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.PostMapper;
+import com.example.forumproject.models.FilterOptions;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.PostDto;
 import com.example.forumproject.models.User;
@@ -36,14 +37,18 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getPosts() {
-        return null;
+    public List<Post> getPosts(@RequestParam(required = false) String title,
+                               @RequestParam(required = false) String sortBy,
+                               @RequestParam(required = false) String sortOrder) {
+        FilterOptions filterOptions = new FilterOptions(title, sortBy, sortOrder);
+
+        return service.getPosts(filterOptions);
     }
 
-    @GetMapping("/{id}")
-    public Post getPost(@PathVariable int id) {
+    @GetMapping("/{userId}")
+    public List<Post> getPost(@PathVariable int id) {
         try {
-            return service.getById(id);
+            return service.getByUserId(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -69,7 +74,7 @@ public class PostController {
     public Post addLikeToPost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
             User user = authenticationHelper.tryGetUser(headers);
-            Post post = service.getById(id);
+            Post post = service.getPostById(id);
             return service.addLike(post, user);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

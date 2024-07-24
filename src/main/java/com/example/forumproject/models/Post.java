@@ -25,7 +25,7 @@ public class Post {
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
-    private User creator;
+    private User createdBy;
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -73,12 +73,12 @@ public class Post {
         this.content = content;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatedBy(User creator) {
+        this.createdBy = createdBy;
     }
 
     public List<Comment> getComments() {
@@ -102,11 +102,12 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id == post.id && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(creator, post.creator) && Objects.equals(creationDate, post.creationDate);
+        return id == post.id && Objects.equals(title, post.title) && Objects.equals(content, post.content) &&
+                Objects.equals(createdBy, post.createdBy) && Objects.equals(creationDate, post.creationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, content, creator, creationDate);
+        return Objects.hash(id, title, content, createdBy, creationDate);
     }
 }

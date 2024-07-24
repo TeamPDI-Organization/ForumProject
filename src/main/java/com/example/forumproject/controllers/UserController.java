@@ -23,6 +23,8 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final String GET_USERS_ERROR_MESSAGE = "Only admins can access user's information";
+
     private final UserService userService;
 
     private final UserMapper userMapper;
@@ -43,16 +45,29 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public List<User> getUsers(@RequestHeader HttpHeaders headers) {
+        try {
+            User user = authenticationHelper.tryGetUser(headers);
+            isAdmin(user);
+            return userService.getUsers();
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+
     }
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable int id) {
+    public User getById(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
+            User user = authenticationHelper.tryGetUser(headers);
+            isAdmin(user);
             return userService.getById(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 
@@ -98,6 +113,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (AuthorizationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
+
+    private void isAdmin(User user) {
+        if (!user.isAdmin()) {
+            throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
         }
     }
 }

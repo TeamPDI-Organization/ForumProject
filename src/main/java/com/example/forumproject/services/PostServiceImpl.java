@@ -84,6 +84,11 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(id);
     }
 
+    @Override
+    public Post addLike(Post post, User user) {
+        return postRepository.addLike(post, user);
+    }
+
     private void checkModifyPermissions(int postId, User user) {
         Post post = postRepository.getById(postId);
         if (!(user.isAdmin() || user.isModerator() || post.getCreator().equals(user))) {

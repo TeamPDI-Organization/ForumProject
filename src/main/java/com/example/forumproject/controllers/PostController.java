@@ -65,6 +65,21 @@ public class PostController {
         }
     }
 
+    @PostMapping("/{id}")
+    public Post addLikeToPost(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        try {
+            User user = authenticationHelper.tryGetUser(headers);
+            Post post = service.getById(id);
+            return service.addLike(post, user);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (EntityDuplicateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public Post update(@RequestHeader HttpHeaders headers, int id, @Valid @RequestBody PostDto postDto) {
         try {

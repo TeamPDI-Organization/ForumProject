@@ -144,12 +144,6 @@ public class UserController {
         }
     }
 
-    private void isAdminOrModerator(User user) {
-        if (!user.isAdmin() && !user.isModerator()) {
-            throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
-        }
-    }
-
     @GetMapping("/search")
     public List<User> searchUsers(
             @RequestParam(required = false) String username,

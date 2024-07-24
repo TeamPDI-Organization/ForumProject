@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService{
 
+    private static final String GET_USERS_ERROR_MESSAGE = "Only admins or moderators can access user's information";;
     private final UserRepository userRepository;
 
     @Autowired
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public void delete(int id, User user) {
         User existingUser = userRepository.getById(id);
-        if (!(user.isAdmin() || user.isModerator() || existingUser.equals(user))) {
+        if (!(user.isAdmin() || existingUser.equals(user))) {
             throw new AuthorizationException("Only admin or the user themselves can delete the user.");
         }
 
@@ -92,9 +93,7 @@ public class UserServiceImpl implements UserService{
         return userRepository.update(user);
     }
     public void blockUser(int userId, User currentUser) {
-        if (!currentUser.isAdmin() || !currentUser.isModerator()) {
-            throw new AuthorizationException("Only admins and moderators can block users.");
-        }
+        isAdminOrModerator(currentUser);
         User user = userRepository.getById(userId);
 
         user.setBlocked(true);
@@ -102,13 +101,16 @@ public class UserServiceImpl implements UserService{
     }
 
     public void unblockUser(int userId, User currentUser) {
-        if (!currentUser.isAdmin() && !currentUser.isModerator()) {
-            throw new AuthorizationException("Only admins and moderators can unblock users.");
-        }
+        isAdminOrModerator(currentUser);
         User user = userRepository.getById(userId);
 
         user.setBlocked(false);
         userRepository.update(user);
+    }
+    private void isAdminOrModerator(User user) {
+        if (!user.isAdmin() && !user.isModerator()) {
+            throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
+        }
     }
 
 }

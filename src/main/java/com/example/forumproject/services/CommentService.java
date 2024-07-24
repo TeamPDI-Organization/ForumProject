@@ -12,4 +12,6 @@ public interface CommentService {
     Comment getCommentById(int id);
 
     Comment update(Comment comment, User user);
+
+    Comment deleteComment(Comment comment, User user);
 }

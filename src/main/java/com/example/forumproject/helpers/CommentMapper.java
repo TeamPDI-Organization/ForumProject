@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommentMapper {
     private final CommentService commentService;
-    private PostService postService;
+    private final PostService postService;
     @Autowired
     public CommentMapper(CommentService commentService, PostService postService) {
         this.commentService = commentService;

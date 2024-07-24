@@ -150,7 +150,7 @@ public class PostRepositoryImpl implements PostRepository {
 
             List<Like> result = query.list();
             if (!result.isEmpty()) {
-                throw new EntityDuplicateException("Like", "ID", " ");
+                throw new EntityDuplicateException("Like", "current", "id");
             }
             Like like = new Like();
             like.setPost(post);

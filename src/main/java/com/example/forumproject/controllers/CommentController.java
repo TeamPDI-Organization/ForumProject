@@ -64,9 +64,18 @@ public class CommentController {
             return commentService.update(comment, user);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (EntityDuplicateException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public Comment deleteComment(@RequestHeader HttpHeaders headers, @PathVariable int id){
+        try {
+            User user = authenticationHelper.tryGetUser(headers);
+            Comment comment = commentService.getCommentById(id);
+            return commentService.deleteComment(comment, user);
+        }catch (AuthorizationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }

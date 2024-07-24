@@ -39,9 +39,31 @@ public class CommentServiceImpl implements CommentService{
         return commentRepository.update(comment);
     }
 
-    private void checkIfUpdaterIsSameAsCreator(User user, Comment comment) {
-        if (user.getId() != comment.getCreatedBy().getId()){
-            throw new AuthorizationException("You are not allowed to update this comment");
+    @Override
+    public Comment deleteComment(Comment comment, User user){
+        if (!checkIfUpdaterIsSameAsCreator(user, comment)){
+            throw new AuthorizationException("You do not have permission to delete this post");
         }
+        if (!checkIfUserIsAdminOrModerator(user)){
+            throw new AuthorizationException("You do not have permission to delete this post");
+        }
+        return commentRepository.delete(comment);
+    }
+
+    private boolean checkIfUpdaterIsSameAsCreator(User user, Comment comment) {
+        if (user.getId() != comment.getId()){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkIfUserIsAdminOrModerator(User user){
+        if (user.isAdmin()){
+            return true;
+        }
+        if (user.isModerator()){
+            return true;
+        }
+        return false;
     }
 }

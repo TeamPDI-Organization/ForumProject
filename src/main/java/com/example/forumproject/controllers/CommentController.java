@@ -4,6 +4,7 @@ import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.services.CommentService;
+import com.example.forumproject.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +19,17 @@ import java.util.List;
 @RequestMapping("/api/comments")
 public class CommentController {
     private CommentService commentService;
+    private PostService postService;
     @Autowired
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, PostService postService) {
         this.commentService = commentService;
+        this.postService = postService;
     }
 
-    @GetMapping("/{id}")
-    public List<Comment> getComment(@PathVariable int id) {
+    @GetMapping("/{postId}")
+    public List<Comment> getComments(@PathVariable int postId) {
         try {
-            return commentService.getById(id);
+            return commentService.getAllComments(postId);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

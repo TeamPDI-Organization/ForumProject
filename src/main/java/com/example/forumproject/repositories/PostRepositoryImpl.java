@@ -83,12 +83,12 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post addLike(Post post, User user) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Like> query = session.createQuery("from Like where post = :postId and user = :userId", Like.class);
+            Query<Like> query = session.createQuery("from Like where post =: postId and user = :userId", Like.class);
             query.setParameter("postId", post.getId());
             query.setParameter("userId", user.getId());
 
             List<Like> result = query.list();
-            if (result.size() != 0) {
+            if (!result.isEmpty()) {
                 throw new EntityDuplicateException("Like", "ID", " ");
             }
             Like like = new Like();
@@ -97,8 +97,8 @@ public class PostRepositoryImpl implements PostRepository {
             session.beginTransaction();
             session.persist(like);
             session.getTransaction().commit();
+            return post;
         }
-        return post;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.forumproject.services;
 
+import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
 
@@ -20,6 +21,12 @@ public interface UserService {
     void delete(int id, User user);
 
     User update(User user, User currentUser);
+
     void blockUser(int userId, User currentUser);
+
     void unblockUser(int userId, User currentUser);
+
+    PhoneNumber setPhoneNumber(PhoneNumber phoneNumber);
+
+    PhoneNumber getPhoneNumber(int userId);
 }

@@ -1,5 +1,6 @@
 package com.example.forumproject.repositories;
 
+import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
 
@@ -21,4 +22,8 @@ public interface UserRepository {
     User update(User user);
 
     List<User> searchUsers(UserFilterOptions options);
+
+    PhoneNumber setPhoneNumber(PhoneNumber phoneNumber);
+
+    PhoneNumber getPhoneNumber(int userId);
 }

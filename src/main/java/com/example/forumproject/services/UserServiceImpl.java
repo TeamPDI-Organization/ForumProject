@@ -3,6 +3,7 @@ package com.example.forumproject.services;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
@@ -111,6 +112,16 @@ public class UserServiceImpl implements UserService{
         if (!user.isAdmin() && !user.isModerator()) {
             throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
         }
+    }
+
+    @Override
+    public PhoneNumber setPhoneNumber(PhoneNumber phoneNumber) {
+        return userRepository.setPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public PhoneNumber getPhoneNumber(int userId) {
+        return userRepository.getPhoneNumber(userId);
     }
 
 }

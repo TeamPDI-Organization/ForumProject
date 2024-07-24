@@ -1,6 +1,7 @@
 package com.example.forumproject.repositories;
 
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
 import org.hibernate.Session;
@@ -121,6 +122,29 @@ public class UserRepositoryImpl implements UserRepository{
             query.setProperties(params);
 
             return query.list();
+        }
+    }
+
+    @Override
+    public PhoneNumber setPhoneNumber(PhoneNumber phoneNumber) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.merge(phoneNumber);
+            session.getTransaction().commit();
+
+            return phoneNumber;
+        }
+    }
+
+    @Override
+    public PhoneNumber getPhoneNumber(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            PhoneNumber phoneNumber = session.get(PhoneNumber.class, userId);
+//            if (phoneNumber == null) {
+//                throw new EntityNotFoundException("PhoneNumber", userId);
+//            }
+
+            return phoneNumber;
         }
     }
 }

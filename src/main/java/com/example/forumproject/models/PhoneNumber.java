@@ -8,29 +8,27 @@ import jakarta.validation.constraints.Size;
 public class PhoneNumber {
 
     @Id
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private int userId;
 
     @Column(name = "phone_number")
-    @Size(min = 8, max = 13, message = "Phone number must be between 8 and 13 symbols")
     private String phoneNumber;
 
     public PhoneNumber() {
 
     }
 
-    public PhoneNumber(User user, String phoneNumber) {
-        this.user = user;
+    public PhoneNumber(int id, String phoneNumber) {
+        this.userId = id;
         this.phoneNumber = phoneNumber;
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getPhoneNumber() {

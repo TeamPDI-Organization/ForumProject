@@ -4,12 +4,10 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
+import com.example.forumproject.helpers.PhoneNumberMapper;
 import com.example.forumproject.helpers.UpdateUserMapper;
 import com.example.forumproject.helpers.UserMapper;
-import com.example.forumproject.models.UpdateUserDto;
-import com.example.forumproject.models.User;
-import com.example.forumproject.models.UserDto;
-import com.example.forumproject.models.UserFilterOptions;
+import com.example.forumproject.models.*;
 import com.example.forumproject.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +30,20 @@ public class UserController {
 
     private final UpdateUserMapper updateUserMapper;
 
+    private final PhoneNumberMapper phoneNumberMapper;
+
     private final AuthenticationHelper authenticationHelper;
 
     @Autowired
     public UserController(UserService userService,
                           UserMapper userMapper,
                           UpdateUserMapper updateUserMapper,
+                          PhoneNumberMapper phoneNumberMapper,
                           AuthenticationHelper authenticationHelper) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.updateUserMapper = updateUserMapper;
+        this.phoneNumberMapper = phoneNumberMapper;
         this.authenticationHelper = authenticationHelper;
     }
 
@@ -87,8 +89,36 @@ public class UserController {
         }
     }
 
+    @GetMapping("/phone-number/{id}")
+    public PhoneNumber getPhoneNumberByUserId(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        User user = authenticationHelper.tryGetUser(headers);
+        PhoneNumber phoneNumber = userService.getPhoneNumber(id);
+        if (phoneNumber == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This admin don't have phone number");
+        }
+
+        return phoneNumber;
+    }
+
+    @PostMapping("/phone-number/{id}")
+    public PhoneNumberDto setPhoneNumber(@RequestHeader HttpHeaders headers, @PathVariable int id,
+                               @RequestBody PhoneNumberDto phoneNumberDto) {
+
+        User user = authenticationHelper.tryGetUser(headers);
+        isAdmin(user);
+
+        try {
+            PhoneNumber newPhoneNumber = phoneNumberMapper.fromDto(id, phoneNumberDto);
+            userService.setPhoneNumber(newPhoneNumber);
+            return phoneNumberDto;
+        } catch (EntityDuplicateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
-    public User update(@RequestHeader HttpHeaders headers, @PathVariable int id, @Valid @RequestBody UpdateUserDto updateUserDto) {
+    public User update(@RequestHeader HttpHeaders headers, @PathVariable int id,
+                       @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             User userToUpdate = updateUserMapper.fromDto(id, updateUserDto);

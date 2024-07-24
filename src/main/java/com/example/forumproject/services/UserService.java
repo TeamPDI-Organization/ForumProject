@@ -20,4 +20,6 @@ public interface UserService {
     void delete(int id, User user);
 
     User update(User user, User currentUser);
+    void blockUser(int userId, User currentUser);
+    void unblockUser(int userId, User currentUser);
 }

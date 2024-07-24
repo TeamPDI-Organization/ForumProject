@@ -91,4 +91,24 @@ public class UserServiceImpl implements UserService{
 
         return userRepository.update(user);
     }
+    public void blockUser(int userId, User currentUser) {
+        if (!currentUser.isAdmin() || !currentUser.isModerator()) {
+            throw new AuthorizationException("Only admins and moderators can block users.");
+        }
+        User user = userRepository.getById(userId);
+
+        user.setBlocked(true);
+        userRepository.update(user);
+    }
+
+    public void unblockUser(int userId, User currentUser) {
+        if (!currentUser.isAdmin() && !currentUser.isModerator()) {
+            throw new AuthorizationException("Only admins and moderators can unblock users.");
+        }
+        User user = userRepository.getById(userId);
+
+        user.setBlocked(false);
+        userRepository.update(user);
+    }
+
 }

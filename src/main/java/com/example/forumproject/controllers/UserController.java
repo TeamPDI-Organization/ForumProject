@@ -120,6 +120,35 @@ public class UserController {
             throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
         }
     }
+    @PutMapping("/{id}/block")
+    public void blockUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        try {
+            User currentUser = authenticationHelper.tryGetUser(headers);
+            userService.blockUser(id, currentUser);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/unblock")
+    public void unblockUser(@RequestHeader HttpHeaders headers, @PathVariable int id) {
+        try {
+            User currentUser = authenticationHelper.tryGetUser(headers);
+            userService.unblockUser(id, currentUser);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AuthorizationException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    private void isAdminOrModerator(User user) {
+        if (!user.isAdmin() && !user.isModerator()) {
+            throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
+        }
+    }
 
     @GetMapping("/search")
     public List<User> searchUsers(

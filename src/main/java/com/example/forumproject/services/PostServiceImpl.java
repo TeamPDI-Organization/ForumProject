@@ -16,14 +16,18 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private static final String MODIFY_POST_ERROR_MESSAGE = "Only admin/moderator or post creator can modify a post.";
+    private static final String BLOCKED_USER_ERROR_MESSAGE = "User is blocked and cannot perform this action.";
+
 
     private final PostRepository postRepository;
+    private final UserService userService;
+
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserService userService) {
         this.postRepository = postRepository;
+        this.userService = userService;
     }
-
 
     @Override
     public List<Post> getPosts(PostFilterOptions postFilterOptions) {
@@ -47,6 +51,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void create(Post post, User user) {
+        checkUserBlocked(user);
+
         boolean duplicateExists = true;
 
         try {
@@ -65,6 +71,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void update(Post post, User user) {
+        checkUserBlocked(user);
         checkModifyPermissions(post.getId(), user);
 
         boolean duplicateExists = true;
@@ -86,6 +93,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void delete(int id, User user) {
+        checkUserBlocked(user);
         checkModifyPermissions(id, user);
         postRepository.delete(id);
     }
@@ -109,6 +117,11 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.getPostById(postId);
         if (!(user.isAdmin() || user.isModerator() || post.getCreatedBy().equals(user))) {
             throw new AuthorizationException(MODIFY_POST_ERROR_MESSAGE);
+        }
+    }
+    private void checkUserBlocked(User user) {
+        if (user.isBlocked()) {
+            throw new AuthorizationException(BLOCKED_USER_ERROR_MESSAGE);
         }
     }
 }

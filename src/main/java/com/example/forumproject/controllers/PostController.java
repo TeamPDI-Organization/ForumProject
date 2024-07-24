@@ -46,9 +46,9 @@ public class PostController {
     }
 
     @GetMapping("/{userId}")
-    public List<Post> getPost(@PathVariable int id) {
+    public List<Post> getPost(@PathVariable int userId) {
         try {
-            return service.getByUserId(id);
+            return service.getByUserId(userId);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

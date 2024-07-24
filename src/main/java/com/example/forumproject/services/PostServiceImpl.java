@@ -89,6 +89,16 @@ public class PostServiceImpl implements PostService {
         return postRepository.addLike(post, user);
     }
 
+    @Override
+    public List<Post> getTopCommentedPosts() {
+        return postRepository.getTopCommentedPosts();
+    }
+
+    @Override
+    public List<Post> getRecentPosts() {
+        return postRepository.getRecentPosts();
+    }
+
     private void checkModifyPermissions(int postId, User user) {
         Post post = postRepository.getById(postId);
         if (!(user.isAdmin() || user.isModerator() || post.getCreator().equals(user))) {

@@ -2,13 +2,17 @@ package com.example.forumproject.repositories;
 
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.User;
+import com.example.forumproject.models.UserFilterOptions;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository{
@@ -84,6 +88,39 @@ public class UserRepositoryImpl implements UserRepository{
             session.merge(user);
             session.getTransaction().commit();
             return user;
+        }
+    }
+
+    @Override
+    public List<User> searchUsers(UserFilterOptions options) {
+        try (Session session = sessionFactory.openSession()){
+            StringBuilder queryBuilder = new StringBuilder("From User");
+            ArrayList<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+
+            options.getUsername().ifPresent(value ->{
+                filters.add(" username like :username ");
+                params.put("username", String.format("%%%s%%", value));
+            });
+
+            options.getEmail().ifPresent(value ->{
+                filters.add(" email like :email ");
+                params.put("email", String.format("%%%s%%", value));
+            });
+
+            options.getFirstName().ifPresent(value -> {
+                filters.add(" firstName like :firstName ");
+                params.put("firstName", String.format("%%%s%%", value));
+            });
+
+            if (!filters.isEmpty()) {
+                queryBuilder.append(" WHERE ")
+                        .append(String.join("AND", filters));
+            }
+            Query<User> query = session.createQuery(queryBuilder.toString(), User.class);
+            query.setProperties(params);
+
+            return query.list();
         }
     }
 }

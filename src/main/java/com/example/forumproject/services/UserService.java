@@ -1,10 +1,13 @@
 package com.example.forumproject.services;
 
 import com.example.forumproject.models.User;
+import com.example.forumproject.models.UserFilterOptions;
 
 import java.util.List;
 
 public interface UserService {
+
+    List<User> searchUsers(UserFilterOptions options);
 
     List<User> getUsers();
 

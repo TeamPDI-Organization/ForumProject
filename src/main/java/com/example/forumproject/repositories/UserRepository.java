@@ -1,8 +1,10 @@
 package com.example.forumproject.repositories;
 
 import com.example.forumproject.models.User;
+import com.example.forumproject.models.UserFilterOptions;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
 
@@ -17,4 +19,6 @@ public interface UserRepository {
     void delete(int id);
 
     User update(User user);
+
+    List<User> searchUsers(UserFilterOptions options);
 }

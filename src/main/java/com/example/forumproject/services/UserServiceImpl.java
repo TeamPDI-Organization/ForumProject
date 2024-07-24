@@ -5,6 +5,7 @@ import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
+import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,16 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService{
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public List<User> searchUsers(UserFilterOptions options) {
+        return userRepository.searchUsers(options);
     }
 
     @Override

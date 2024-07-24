@@ -9,6 +9,7 @@ import com.example.forumproject.helpers.UserMapper;
 import com.example.forumproject.models.UpdateUserDto;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserDto;
+import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,4 +120,16 @@ public class UserController {
             throw new AuthorizationException(GET_USERS_ERROR_MESSAGE);
         }
     }
+
+    @GetMapping("/search")
+    public List<User> searchUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String firstName){
+
+        UserFilterOptions options = new UserFilterOptions(username, email, firstName);
+
+        return userService.searchUsers(options);
+    }
+
 }

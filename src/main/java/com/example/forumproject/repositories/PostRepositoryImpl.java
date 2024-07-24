@@ -1,7 +1,10 @@
 package com.example.forumproject.repositories;
 
+import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.models.Like;
 import com.example.forumproject.models.Post;
+import com.example.forumproject.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -74,6 +77,46 @@ public class PostRepositoryImpl implements PostRepository {
             session.beginTransaction();
             session.remove(postToDelete);
             session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public Post addLike(Post post, User user) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Like> query = session.createQuery("from Like where post = :postId and user = :userId", Like.class);
+            query.setParameter("postId", post.getId());
+            query.setParameter("userId", user.getId());
+
+            List<Like> result = query.list();
+            if (result.size() != 0) {
+                throw new EntityDuplicateException("Like", "ID", " ");
+            }
+            Like like = new Like();
+            like.setPost(post);
+            like.setUser(user);
+            session.beginTransaction();
+            session.persist(like);
+            session.getTransaction().commit();
+        }
+        return post;
+    }
+
+    @Override
+    public List<Post> getTopCommentedPosts() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                            "select p from Post p left join p.comments c group by p.id order by count(c) desc", Post.class)
+                    .setMaxResults(10)
+                    .list();
+        }
+    }
+
+    @Override
+    public List<Post> getRecentPosts() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Post p order by p.creationDate desc", Post.class)
+                    .setMaxResults(10)
+                    .list();
         }
     }
 }

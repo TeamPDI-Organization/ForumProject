@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,10 @@ public class Post {
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
     private User creator;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -74,6 +79,14 @@ public class Post {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     public LocalDateTime getCreationDate() {

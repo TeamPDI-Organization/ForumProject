@@ -54,11 +54,6 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User update(int id, User user2) {
-        return null;
-    }
-
-    @Override
     public void delete(int id, User user) {
         User existingUser = userRepository.getById(id);
         if (!(user.isAdmin() || user.isModerator() || existingUser.equals(user))) {

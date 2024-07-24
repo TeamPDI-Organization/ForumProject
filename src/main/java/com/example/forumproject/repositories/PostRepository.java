@@ -20,4 +20,6 @@ public interface PostRepository {
     void delete(int id);
 
     Post addLike(Post post, User user);
+    List<Post> getTopCommentedPosts();
+    List<Post> getRecentPosts();
 }

@@ -17,7 +17,7 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-//    @Column(name = "creator")
+
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
     private User createdBy;
@@ -30,7 +30,7 @@ public class Comment {
         this.creationDate = LocalDateTime.now();
     }
 
-//    @Column(name = "post_id")
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;

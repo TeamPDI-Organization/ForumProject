@@ -100,4 +100,23 @@ public class PostRepositoryImpl implements PostRepository {
         }
         return post;
     }
+
+    @Override
+    public List<Post> getTopCommentedPosts() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                            "select p from Post p left join p.comments c group by p.id order by count(c) desc", Post.class)
+                    .setMaxResults(10)
+                    .list();
+        }
+    }
+
+    @Override
+    public List<Post> getRecentPosts() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Post p order by p.creationDate desc", Post.class)
+                    .setMaxResults(10)
+                    .list();
+        }
+    }
 }

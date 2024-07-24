@@ -19,7 +19,7 @@ public class Comment {
     private String content;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "createdby_id")
     private User createdBy;
 

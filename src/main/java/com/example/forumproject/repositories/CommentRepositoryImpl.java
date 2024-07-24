@@ -2,7 +2,9 @@ package com.example.forumproject.repositories;
 
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.Comment;
+import com.example.forumproject.models.CommentDto;
 import com.example.forumproject.models.Post;
+import com.example.forumproject.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -35,17 +37,40 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public void create(Comment comment) {
-
-    }
-
-    @Override
-    public void update(Comment comment) {
-
+    public Comment update(Comment comment) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.merge(comment);
+            session.getTransaction().commit();
+        }
+        return comment;
     }
 
     @Override
     public void delete(int id) {
 
+    }
+
+    @Override
+    public Comment getCommentById(int commentId) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Comment> query = session.createQuery("from Comment where id = :id", Comment.class);
+            query.setParameter("id", commentId);
+            List<Comment> comments = query.list();
+            if (comments == null) {
+                throw new EntityNotFoundException("Comment", commentId);
+            }
+            return comments.get(0);
+        }
+    }
+
+    @Override
+    public Comment createComment(Comment comment) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(comment);
+            session.getTransaction().commit();
+        }
+        return comment;
     }
 }

@@ -2,7 +2,7 @@ package com.example.forumproject.repositories;
 
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
-import com.example.forumproject.models.FilterOptions;
+import com.example.forumproject.models.PostFilterOptions;
 import com.example.forumproject.models.Like;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
@@ -28,13 +28,13 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getPosts(FilterOptions filterOptions) {
+    public List<Post> getPosts(PostFilterOptions postFilterOptions) {
         try (Session session = sessionFactory.openSession()) {
             StringBuilder queryBuilder = new StringBuilder("From Post");
             ArrayList<String> filters = new ArrayList<>();
             Map<String, Object> params = new HashMap<>();
 
-            filterOptions.getTitle().ifPresent(value -> {
+            postFilterOptions.getTitle().ifPresent(value -> {
                 filters.add(" title like :title ");
                 params.put("title", String.format("%%%s%%", value));
             });
@@ -44,7 +44,7 @@ public class PostRepositoryImpl implements PostRepository {
                         .append(String.join("AND", filters));
             }
 
-            queryBuilder.append(createOrderBy(filterOptions));
+            queryBuilder.append(createOrderBy(postFilterOptions));
             Query<Post> query = session.createQuery(queryBuilder.toString(), Post.class);
             query.setProperties(params);
 
@@ -52,10 +52,10 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    private String createOrderBy(FilterOptions filterOptions) {
+    private String createOrderBy(PostFilterOptions postFilterOptions) {
         String orderBy = "";
-        if (!filterOptions.getSortBy().isEmpty()) {
-            switch (filterOptions.getSortBy().get()) {
+        if (!postFilterOptions.getSortBy().isEmpty()) {
+            switch (postFilterOptions.getSortBy().get()) {
                 case "title":
                     orderBy = "title";
                     break;
@@ -65,8 +65,8 @@ public class PostRepositoryImpl implements PostRepository {
             }
             orderBy = String.format(" order by %s", orderBy);
 
-            if (filterOptions.getSortOrder().isPresent()
-                    && filterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
+            if (postFilterOptions.getSortOrder().isPresent()
+                    && postFilterOptions.getSortOrder().get().equalsIgnoreCase("desc")) {
                 orderBy = String.format("%s DESC", orderBy);
             }
         }

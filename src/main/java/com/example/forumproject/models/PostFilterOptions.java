@@ -2,7 +2,7 @@ package com.example.forumproject.models;
 
 import java.util.Optional;
 
-public class FilterOptions {
+public class PostFilterOptions {
 
     private Optional<String> title;
 
@@ -10,7 +10,7 @@ public class FilterOptions {
 
     private Optional<String> sortOrder;
 
-    public FilterOptions(String title, String sortBy, String sortOrder) {
+    public PostFilterOptions(String title, String sortBy, String sortOrder) {
         this.title = Optional.ofNullable(title);
         this.sortBy = Optional.ofNullable(sortBy);
         this.sortOrder = Optional.ofNullable(sortOrder);

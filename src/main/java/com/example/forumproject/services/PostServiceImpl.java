@@ -3,7 +3,7 @@ package com.example.forumproject.services;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
-import com.example.forumproject.models.FilterOptions;
+import com.example.forumproject.models.PostFilterOptions;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 import com.example.forumproject.repositories.PostRepository;
@@ -26,8 +26,8 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public List<Post> getPosts(FilterOptions filterOptions) {
-        return postRepository.getPosts(filterOptions);
+    public List<Post> getPosts(PostFilterOptions postFilterOptions) {
+        return postRepository.getPosts(postFilterOptions);
     }
 
     @Override

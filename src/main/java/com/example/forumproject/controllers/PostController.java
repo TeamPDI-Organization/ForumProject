@@ -5,7 +5,7 @@ import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.PostMapper;
-import com.example.forumproject.models.FilterOptions;
+import com.example.forumproject.models.PostFilterOptions;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.PostDto;
 import com.example.forumproject.models.User;
@@ -40,9 +40,9 @@ public class PostController {
     public List<Post> getPosts(@RequestParam(required = false) String title,
                                @RequestParam(required = false) String sortBy,
                                @RequestParam(required = false) String sortOrder) {
-        FilterOptions filterOptions = new FilterOptions(title, sortBy, sortOrder);
+        PostFilterOptions postFilterOptions = new PostFilterOptions(title, sortBy, sortOrder);
 
-        return service.getPosts(filterOptions);
+        return service.getPosts(postFilterOptions);
     }
 
     @GetMapping("/{userId}")

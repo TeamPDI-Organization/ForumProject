@@ -65,14 +65,14 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User update(User user, User currentUser) {
-        if (!currentUser.isAdmin() || currentUser.getId() != user.getId()) {
-            throw new AuthorizationException("Only admin or the user themselves can update the user.");
+        if (currentUser.getId() != user.getId()) {
+            throw new AuthorizationException("Only the user themselves can update the user.");
         }
 
         boolean duplicateExists = true;
         try {
-            User existingUser = userRepository.getByUsername(user.getUsername());
-            if (existingUser.getId() == user.getId()) {
+            User existingUser = userRepository.getByUsername(currentUser.getUsername());
+            if (existingUser.getId() == currentUser.getId()) {
                 duplicateExists = false;
             }
         } catch (EntityNotFoundException e) {

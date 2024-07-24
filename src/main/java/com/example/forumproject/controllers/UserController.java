@@ -4,7 +4,9 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
+import com.example.forumproject.helpers.UpdateUserMapper;
 import com.example.forumproject.helpers.UserMapper;
+import com.example.forumproject.models.UpdateUserDto;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserDto;
 import com.example.forumproject.services.UserService;
@@ -25,12 +27,18 @@ public class UserController {
 
     private final UserMapper userMapper;
 
+    private final UpdateUserMapper updateUserMapper;
+
     private final AuthenticationHelper authenticationHelper;
 
     @Autowired
-    public UserController(UserService userService, UserMapper userMapper, AuthenticationHelper authenticationHelper) {
+    public UserController(UserService userService,
+                          UserMapper userMapper,
+                          UpdateUserMapper updateUserMapper,
+                          AuthenticationHelper authenticationHelper) {
         this.userService = userService;
         this.userMapper = userMapper;
+        this.updateUserMapper = updateUserMapper;
         this.authenticationHelper = authenticationHelper;
     }
 
@@ -66,11 +74,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User update(@RequestHeader HttpHeaders headers, int id, @Valid @RequestBody UserDto userDto) {
+    public User update(@RequestHeader HttpHeaders headers, @PathVariable int id, @Valid @RequestBody UpdateUserDto updateUserDto) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
-            User userToUpdate = userMapper.fromDto(id, userDto);
-            userToUpdate.setId(id);
+            User userToUpdate = updateUserMapper.fromDto(id, updateUserDto);
 
             return userService.update(userToUpdate, currentUser);
         } catch (EntityNotFoundException e) {

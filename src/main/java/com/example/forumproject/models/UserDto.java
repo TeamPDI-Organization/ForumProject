@@ -5,13 +5,6 @@ import jakarta.validation.constraints.Size;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 public class UserDto {
-    public UserDto(String username, String password, String firstName, String lastName, String email) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
     @NotNull
     @Size(min = 4, max = 32, message = "Username should be between 4 and 32 symbols")
     private String username;
@@ -21,8 +14,17 @@ public class UserDto {
     private String firstName;
 
     private String lastName;
+
     @Unique
     private String email;
+
+    public UserDto(String username, String password, String firstName, String lastName, String email) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 
     public String getUsername() {
         return username;

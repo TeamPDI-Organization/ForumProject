@@ -1,5 +1,6 @@
 package com.example.forumproject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-//    @Column(name = "creator")
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "createdby_id")
     private User createdBy;
@@ -30,7 +31,7 @@ public class Comment {
         this.creationDate = LocalDateTime.now();
     }
 
-//    @Column(name = "post_id")
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;

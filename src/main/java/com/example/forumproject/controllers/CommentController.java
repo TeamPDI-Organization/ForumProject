@@ -27,6 +27,7 @@ public class CommentController {
     private final CommentService commentService;
     private final PostService postService;
     private final UpdateCommentMapper updateCommentMapper;
+
     @Autowired
     public CommentController(CommentService commentService, PostService postService, AuthenticationHelper authenticationHelper, CommentMapper commentMapper, UpdateCommentMapper updateCommentMapper) {
         this.commentService = commentService;

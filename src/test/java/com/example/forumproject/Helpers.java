@@ -1,5 +1,6 @@
 package com.example.forumproject;
 
+import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 
@@ -28,6 +29,16 @@ public class Helpers {
         mockPost.setCreatedBy(createMockUser());
         mockPost.setContent("Some content which is needed in order to test the mock Post.");
         mockPost.setCreationDate(LocalDateTime.now());
+
         return mockPost;
+    }
+
+    public static Comment createMockComment(){
+        Comment mockComment = new Comment();
+        mockComment.setId(100);
+        mockComment.setContent("Some content which is needed in order to test the mock Comment.");
+        mockComment.setCreationDate(LocalDateTime.now());
+
+        return mockComment;
     }
 }

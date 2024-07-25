@@ -11,7 +11,10 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService{
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+
+    private static final String BLOCKED_USER_ERROR_MESSAGE = "User is blocked and cannot perform this action.";
+
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -35,35 +38,44 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public Comment update(Comment comment, User user) {
+        checkUserBlocked(user);
         checkIfUpdaterIsSameAsCreator(user, comment);
         return commentRepository.update(comment);
     }
 
     @Override
     public Comment deleteComment(Comment comment, User user){
-        if (!checkIfUpdaterIsSameAsCreator(user, comment)){
-            throw new AuthorizationException("You do not have permission to delete this post");
+        checkUserBlocked(user);
+        if (!(checkIfUpdaterIsSameAsCreator(user, comment) || checkIfUserIsAdminOrModerator(user))){
+            throw new AuthorizationException("You do not have permission to delete this comment");
         }
-        if (!checkIfUserIsAdminOrModerator(user)){
-            throw new AuthorizationException("You do not have permission to delete this post");
-        }
+
+//        if (!checkIfUserIsAdminOrModerator(user)){
+//            throw new AuthorizationException("You do not have permission to delete this comment");
+//        }
         return commentRepository.delete(comment);
     }
 
     private boolean checkIfUpdaterIsSameAsCreator(User user, Comment comment) {
-        if (user.getId() != comment.getId()){
-            return false;
+        if (comment.getCreatedBy().equals(user)){
+            return true;
         }
-        return true;
+        return false;
     }
 
     public boolean checkIfUserIsAdminOrModerator(User user){
         if (user.isAdmin()){
             return true;
-        }
-        if (user.isModerator()){
+        } else if (user.isModerator()) {
             return true;
         }
+
         return false;
+    }
+
+    private void checkUserBlocked(User user) {
+        if (user.isBlocked()) {
+            throw new AuthorizationException(BLOCKED_USER_ERROR_MESSAGE);
+        }
     }
 }

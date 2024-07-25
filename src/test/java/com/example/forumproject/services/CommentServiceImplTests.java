@@ -1,5 +1,6 @@
 package com.example.forumproject.services;
 
+import com.example.forumproject.Helpers;
 import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.User;
 import com.example.forumproject.repositories.CommentRepository;
@@ -52,18 +53,30 @@ class CommentServiceImplTests {
     }
 
     @Test
-    void deleteComment_ValidCommentAndUser_Success() {
-        User adminUser = new User();
-        adminUser.setAdmin(true);
-        Comment comment = new Comment();
-        comment.setId(1);
-        comment.setCreatedBy(adminUser);
+    void deleteComment_ValidCommentAndUserIsCreator_Success() {
+        User user = Helpers.createMockUser();
+        Comment comment = Helpers.createMockComment();
+        comment.setCreatedBy(user);
+        when(commentRepository.getCommentById(comment.getId())).thenReturn(comment);
 
-        when(commentRepository.delete(comment)).thenReturn(comment);
+        commentService.deleteComment(comment, user);
+        verify(commentRepository).delete(comment);
 
-        Comment deletedComment = commentService.deleteComment(comment, adminUser);
-        assertNotNull(deletedComment);
-        assertEquals(comment.getId(), deletedComment.getId());
+    }
+
+    @Test
+    void deleteComment_ValidCommentAndUserIsAdmin_Success() {
+        User creator = Helpers.createMockUser();
+        creator.setId(101);
+        User admin = Helpers.createMockUser();
+        admin.setAdmin(true);
+        Comment comment = Helpers.createMockComment();
+        comment.setCreatedBy(creator);
+        when(commentRepository.getCommentById(comment.getId())).thenReturn(comment);
+
+        commentService.deleteComment(comment, admin);
+        verify(commentRepository).delete(comment);
+
     }
 
     @Test

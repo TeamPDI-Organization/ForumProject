@@ -119,6 +119,7 @@ public class PostServiceImpl implements PostService {
             throw new AuthorizationException(MODIFY_POST_ERROR_MESSAGE);
         }
     }
+
     private void checkUserBlocked(User user) {
         if (user.isBlocked()) {
             throw new AuthorizationException(BLOCKED_USER_ERROR_MESSAGE);

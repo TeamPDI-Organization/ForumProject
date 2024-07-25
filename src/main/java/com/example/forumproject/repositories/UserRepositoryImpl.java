@@ -78,7 +78,6 @@ public class UserRepositoryImpl implements UserRepository{
             }
             session.remove(user);
             session.getTransaction().commit();
-
         }
     }
 
@@ -88,8 +87,8 @@ public class UserRepositoryImpl implements UserRepository{
             session.beginTransaction();
             session.merge(user);
             session.getTransaction().commit();
-            return user;
         }
+        return user;
     }
 
     @Override

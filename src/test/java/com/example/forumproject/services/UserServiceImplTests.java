@@ -1,8 +1,11 @@
 package com.example.forumproject.services;
 
+import com.example.forumproject.Helpers;
+import com.example.forumproject.controllers.UserController;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
@@ -13,14 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTests {
 
     @Mock
     private UserRepository mockUserRepository;
+    @Mock
+    private AuthenticationHelper authenticationHelper;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -93,5 +99,64 @@ class UserServiceImplTests {
 
         verify(mockUserRepository).getById(existingUser.getId());
         verify(mockUserRepository, never()).delete(existingUser.getId());
+    }
+
+    @Test
+    public void testBlockUser_Success() {
+        User adminUser = Helpers.createMockUser();
+        adminUser.setAdmin(true);
+        User userToBlock = Helpers.createMockUser();
+        userToBlock.setId(200);
+
+        when(mockUserRepository.getById(200)).thenReturn(userToBlock);
+
+        userService.blockUser(200, adminUser);
+
+        assertTrue(userToBlock.isBlocked());
+        verify(mockUserRepository).update(userToBlock);
+    }
+
+    @Test
+    public void testBlockUser_Unauthorized() {
+        User regularUser = Helpers.createMockUser();
+        HttpHeaders headers = new HttpHeaders();
+
+        when(authenticationHelper.tryGetUser(headers)).thenReturn(regularUser);
+
+        AuthorizationException exception = assertThrows(AuthorizationException.class, () -> {
+            userService.blockUser(200, regularUser);
+        });
+
+        verify(mockUserRepository, never()).update(any(User.class));
+
+    }
+
+    @Test
+    public void testUnblockUser_Success() {
+        User adminUser = Helpers.createMockUser();
+        adminUser.setAdmin(true);
+        User userToUnblock = Helpers.createMockUser();
+        userToUnblock.setId(200);
+        userToUnblock.setBlocked(true);
+
+        when(mockUserRepository.getById(200)).thenReturn(userToUnblock);
+
+        userService.unblockUser(200, adminUser);
+
+        assertFalse(userToUnblock.isBlocked());
+        verify(mockUserRepository).update(userToUnblock);
+    }
+
+    @Test
+    public void testUnblockUser_Unauthorized() {
+        User regularUser = Helpers.createMockUser();
+        regularUser.setAdmin(false);
+        regularUser.setModerator(false);
+
+        assertThrows(AuthorizationException.class, () -> {
+            userService.unblockUser(200, regularUser);
+        });
+
+        verify(mockUserRepository, never()).update(any(User.class));
     }
 }

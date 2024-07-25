@@ -1,5 +1,7 @@
+
 package com.example.forumproject.services;
 
+import com.example.forumproject.Helpers;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
@@ -13,10 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class PostServiceImplTest {
+class PostServiceImplTests {
 
     @Mock
     private PostRepository postRepository;
@@ -33,10 +37,75 @@ class PostServiceImplTest {
     }
 
     @Test
+    public void testGetPosts(){
+        List<Post> expectedPosts = List.of(new Post(), new Post());
+
+        when(postRepository.getPosts(any())).thenReturn(expectedPosts);
+
+        List<Post> actualPosts = postService.getPosts(null);
+        assertEquals(expectedPosts, actualPosts);
+        verify(postRepository).getPosts(any());
+    }
+
+    @Test
+    public void testGetByUserId(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        Post post2 = Helpers.createMockPost();
+        post.setCreatedBy(user);
+        List<Post> userPosts = List.of(post, post2);
+
+        when(postRepository.getByUserId(user.getId())).thenReturn(userPosts);
+
+        List<Post> actualPosts = postService.getByUserId(user.getId());
+
+        assertEquals(userPosts, actualPosts);
+        verify(postRepository).getByUserId(user.getId());
+
+    }
+
+    @Test
+    public void testGetByTitle(){
+        Post expectedPost = Helpers.createMockPost();
+
+        when(postRepository.getByTitle(expectedPost.getTitle())).thenReturn(expectedPost);
+
+        Post actualPost = postService.getByTitle(expectedPost.getTitle());
+
+        assertEquals(expectedPost, actualPost);
+        verify(postRepository).getByTitle(expectedPost.getTitle());
+    }
+
+    @Test
+    public void testUpdate(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        post.setCreatedBy(user);
+
+        when(postRepository.getByTitle(post.getTitle())).thenReturn(post);
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+
+        postService.update(post, user);
+        verify(postRepository).update(post);
+    }
+
+    @Test
+    public void testDelete(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        post.setCreatedBy(user);
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+
+        postService.delete(post.getId(), user);
+        verify(postRepository).delete(post.getId());
+    }
+
+    @
+    @Test
     void create_ValidPost_Success() {
-        User user = new User();
-        Post post = new Post();
-        post.setTitle("New Post Title");
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        post.setCreatedBy(user);
 
         when(postRepository.getByTitle(post.getTitle())).thenThrow(EntityNotFoundException.class);
 

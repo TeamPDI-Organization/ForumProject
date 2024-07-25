@@ -207,7 +207,7 @@ public class UserControllerImplTests {
         adminUser.setAdmin(true);
         HttpHeaders headers = new HttpHeaders();
 
-        UpdateUserDto updateUserDto = new UpdateUserDto(); // Provide necessary details
+        UpdateUserDto updateUserDto = new UpdateUserDto();
         when(authenticationHelper.tryGetUser(headers)).thenReturn(adminUser);
         when(updateUserMapper.fromDto(anyInt(), any(UpdateUserDto.class))).thenReturn(new User());
         when(userService.update(any(User.class), any(User.class))).thenThrow(new EntityNotFoundException("User", 1));

@@ -1,6 +1,5 @@
 package com.example.forumproject.services;
 
-import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.models.Comment;
 import com.example.forumproject.models.User;
 import com.example.forumproject.repositories.CommentRepository;
@@ -13,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CommentServiceImplTest {
+class CommentServiceImplTests {
 
     @Mock
     private CommentRepository commentRepository;

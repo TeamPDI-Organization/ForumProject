@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.getRecentPosts();
     }
 
-    private void checkModifyPermissions(int postId, User user) {
+    public void checkModifyPermissions(int postId, User user) {
         Post post = postRepository.getPostById(postId);
         if (!(user.isAdmin() || user.isModerator() || post.getCreatedBy().equals(user))) {
             throw new AuthorizationException(MODIFY_POST_ERROR_MESSAGE);

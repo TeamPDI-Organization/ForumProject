@@ -77,7 +77,7 @@ public class Post {
         return createdBy;
     }
 
-    public void setCreatedBy(User creator) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 

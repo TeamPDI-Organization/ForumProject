@@ -37,7 +37,7 @@ class PostServiceImplTests {
     }
 
     @Test
-    public void testGetPosts(){
+    public void testGetPosts() {
         List<Post> expectedPosts = List.of(new Post(), new Post());
 
         when(postRepository.getPosts(any())).thenReturn(expectedPosts);
@@ -48,7 +48,7 @@ class PostServiceImplTests {
     }
 
     @Test
-    public void testGetByUserId(){
+    public void testGetByUserId() {
         User user = Helpers.createMockUser();
         Post post = Helpers.createMockPost();
         Post post2 = Helpers.createMockPost();
@@ -65,7 +65,7 @@ class PostServiceImplTests {
     }
 
     @Test
-    public void testGetByTitle(){
+    public void testGetByTitle() {
         Post expectedPost = Helpers.createMockPost();
 
         when(postRepository.getByTitle(expectedPost.getTitle())).thenReturn(expectedPost);
@@ -77,7 +77,7 @@ class PostServiceImplTests {
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         User user = Helpers.createMockUser();
         Post post = Helpers.createMockPost();
         post.setCreatedBy(user);
@@ -90,7 +90,23 @@ class PostServiceImplTests {
     }
 
     @Test
-    public void testDelete(){
+    public void testUpdateDuplicate() {
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        post.setCreatedBy(user);
+
+        Post anotherPost = Helpers.createMockPost();
+        anotherPost.setCreatedBy(user);
+        anotherPost.setId(post.getId() + 1);
+
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+        when(postRepository.getByTitle(post.getTitle())).thenReturn(anotherPost);
+
+        assertThrows(EntityDuplicateException.class, () -> postService.update(post, user));
+    }
+
+    @Test
+    public void testDelete() {
         User user = Helpers.createMockUser();
         Post post = Helpers.createMockPost();
         post.setCreatedBy(user);
@@ -100,7 +116,72 @@ class PostServiceImplTests {
         verify(postRepository).delete(post.getId());
     }
 
-    @
+    @Test
+    public void testDelete_WithoutPermissions(){
+        User user = Helpers.createMockUser();
+        User anotherUser = Helpers.createMockUser();
+        anotherUser.setId(user.getId() + 1);
+
+        Post post = Helpers.createMockPost();
+        post.setCreatedBy(anotherUser);
+
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+
+        assertThrows(AuthorizationException.class, () -> postService.delete(post.getId(), user));
+
+    }
+
+    @Test
+    public void testCreatePost_ByBlockedUser(){
+        User blockedUser = Helpers.createMockUser();
+        blockedUser.setBlocked(true);
+        Post post = Helpers.createMockPost();
+
+        assertThrows(AuthorizationException.class, () -> postService.create(post, blockedUser));
+    }
+
+    @Test
+    public void testAddLike(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+
+        when(postService.addLike(post, user)).thenReturn(post);
+
+        Post likedPost = postService.addLike(post, user);
+
+        assertEquals(post, likedPost);
+        verify(postRepository).addLike(post, user);
+    }
+
+    @Test
+    public void testGetTopCommentedPosts(){
+        Post post1 = Helpers.createMockPost();
+        Post post2 = Helpers.createMockPost();
+
+        List<Post> expectedPosts = List.of(post1, post2);
+
+        when(postRepository.getTopCommentedPosts()).thenReturn(expectedPosts);
+
+        List<Post> actualPosts = postService.getTopCommentedPosts();
+
+        assertEquals(expectedPosts, actualPosts);
+        verify(postRepository).getTopCommentedPosts();
+    }
+
+    @Test
+    public void testGetMostRecentPosts(){
+        Post post1 = Helpers.createMockPost();
+        Post post2 = Helpers.createMockPost();
+        List<Post> expectedPosts = List.of(post1, post2);
+
+        when(postRepository.getRecentPosts()).thenReturn(expectedPosts);
+
+        List<Post> actualPosts = postService.getRecentPosts();
+
+        assertEquals(expectedPosts, actualPosts);
+        verify(postRepository).getRecentPosts();
+    }
+
     @Test
     void create_ValidPost_Success() {
         User user = Helpers.createMockUser();
@@ -115,11 +196,10 @@ class PostServiceImplTests {
 
     @Test
     void create_DuplicateTitle_ThrowsEntityDuplicateException() {
-        User user = new User();
-        Post post = new Post();
-        post.setTitle("Existing Post Title");
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
 
-        when(postRepository.getByTitle(post.getTitle())).thenReturn(new Post());
+        when(postRepository.getByTitle(post.getTitle())).thenReturn(post);
 
         assertThrows(EntityDuplicateException.class, () -> postService.create(post, user));
     }

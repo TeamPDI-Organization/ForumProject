@@ -50,17 +50,12 @@ public class CommentServiceImpl implements CommentService{
             throw new AuthorizationException("You do not have permission to delete this comment");
         }
 
-//        if (!checkIfUserIsAdminOrModerator(user)){
-//            throw new AuthorizationException("You do not have permission to delete this comment");
-//        }
+
         return commentRepository.delete(comment);
     }
 
     private boolean checkIfUpdaterIsSameAsCreator(User user, Comment comment) {
-        if (comment.getCreatedBy().equals(user)){
-            return true;
-        }
-        return false;
+        return comment.getCreatedBy().equals(user);
     }
 
     public boolean checkIfUserIsAdminOrModerator(User user){

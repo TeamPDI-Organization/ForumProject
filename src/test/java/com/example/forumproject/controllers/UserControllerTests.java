@@ -8,7 +8,6 @@ import com.example.forumproject.helpers.UpdateUserMapper;
 import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.UpdateUserDto;
 import com.example.forumproject.models.User;
-import com.example.forumproject.models.UserDto;
 import com.example.forumproject.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserControllerImplTests {
+public class UserControllerTests {
     private static final String AUTHORIZATION_ACCESS_MESSAGE = "Only admins or moderators can access user's information";
 
     @Mock

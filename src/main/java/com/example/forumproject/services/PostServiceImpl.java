@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void create(Post post, User user) {
+    public Post create(Post post, User user) {
         checkUserBlocked(user);
 
         boolean duplicateExists = true;
@@ -67,6 +67,7 @@ public class PostServiceImpl implements PostService {
 
         post.setCreatedBy(user);
         postRepository.create(post);
+        return post;
     }
 
     @Override

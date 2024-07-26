@@ -16,7 +16,7 @@ public interface PostService {
 
     Post getByTitle(String title);
 
-    void create(Post post, User user);
+    Post create(Post post, User user);
 
     void update(Post post, User user);
 

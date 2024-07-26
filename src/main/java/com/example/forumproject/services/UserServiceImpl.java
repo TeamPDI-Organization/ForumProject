@@ -124,4 +124,9 @@ public class UserServiceImpl implements UserService{
         return userRepository.getPhoneNumber(userId);
     }
 
+    @Override
+    public User makeModerator(int userId) {
+        return userRepository.makeModerator(userId);
+    }
+
 }

@@ -26,4 +26,6 @@ public interface UserRepository {
     PhoneNumber setPhoneNumber(PhoneNumber phoneNumber);
 
     PhoneNumber getPhoneNumber(int userId);
+
+    User makeModerator(int userId);
 }

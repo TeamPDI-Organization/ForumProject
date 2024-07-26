@@ -143,4 +143,19 @@ public class UserRepositoryImpl implements UserRepository{
             return phoneNumber;
         }
     }
+
+    @Override
+    public User makeModerator(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            User user = session.get(User.class, userId);
+            if (user == null) {
+                throw new EntityNotFoundException("User", userId);
+            }
+            user.setModerator(true);
+            session.getTransaction().commit();
+
+            return user;
+        }
+    }
 }

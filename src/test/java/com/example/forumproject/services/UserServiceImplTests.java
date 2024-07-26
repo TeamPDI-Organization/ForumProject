@@ -18,6 +18,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,67 +41,54 @@ class UserServiceImplTests {
 
     @Test
     void testCreateUser_Success() {
-        User newUser = new User();
-        newUser.setUsername("newUser");
+        User user = Helpers.createMockUser();
 
-        when(mockUserRepository.getByUsername(newUser.getUsername())).thenThrow(EntityNotFoundException.class);
-        when(mockUserRepository.create(newUser)).thenReturn(newUser);
+        when(mockUserRepository.getByUsername(user.getUsername())).thenThrow(EntityNotFoundException.class);
+        when(mockUserRepository.create(user)).thenReturn(user);
 
-        User createdUser = userService.create(newUser);
+        User createdUser = userService.create(user);
+        assertEquals(user, createdUser);
+        verify(mockUserRepository).getByUsername(user.getUsername());
+        verify(mockUserRepository).create(user);
 
-        verify(mockUserRepository).getByUsername(newUser.getUsername());
-        verify(mockUserRepository).create(newUser);
-        // Additional assertions as needed
     }
 
     @Test
     void testCreateUser_DuplicateUsername() {
-        User existingUser = new User();
-        existingUser.setUsername("existingUser");
+        User user = Helpers.createMockUser();
 
-        User newUser = new User();
-        newUser.setUsername("existingUser");
+        when(mockUserRepository.getByUsername(user.getUsername())).thenReturn(user);
 
-        when(mockUserRepository.getByUsername(existingUser.getUsername())).thenReturn(existingUser);
+        assertThrows(EntityDuplicateException.class, () -> userService.create(user));
 
-        assertThrows(EntityDuplicateException.class, () -> userService.create(newUser));
-
-        verify(mockUserRepository).getByUsername(existingUser.getUsername());
-        verify(mockUserRepository, never()).create(newUser);
+        verify(mockUserRepository).getByUsername(user.getUsername());
+        verify(mockUserRepository, never()).create(user);
     }
 
     @Test
     void testDeleteUser_Success() {
-        User currentUser = new User();
-        currentUser.setId(1);
-        currentUser.setAdmin(true);
+        User userToDelete = Helpers.createMockUser();
+        int userId = userToDelete.getId();
 
-        User existingUser = new User();
-        existingUser.setId(2);
+        when(mockUserRepository.getById(userId)).thenReturn(userToDelete);
 
-        when(mockUserRepository.getById(existingUser.getId())).thenReturn(existingUser);
+        userService.delete(userId, userToDelete);
 
-        userService.delete(existingUser.getId(), currentUser);
-
-        verify(mockUserRepository).getById(existingUser.getId());
-        verify(mockUserRepository).delete(existingUser.getId());
+        verify(mockUserRepository).delete(userId);
     }
 
     @Test
     void testDeleteUser_Unauthorized() {
-        User currentUser = new User();
-        currentUser.setId(1);
+        User user = Helpers.createMockUser();
+        User userToDelete = Helpers.createMockUser();
+        userToDelete.setId(101);
+        int userToDeleteId = userToDelete.getId();
 
-        User existingUser = new User();
-        existingUser.setId(2);
+        when(mockUserRepository.getById(userToDeleteId)).thenReturn(userToDelete);
 
-        when(mockUserRepository.getById(existingUser.getId())).thenReturn(existingUser);
+        assertThrows(AuthorizationException.class, () -> userService.delete(userToDeleteId, user));
 
-
-        assertThrows(AuthorizationException.class, () -> userService.delete(existingUser.getId(), currentUser));
-
-        verify(mockUserRepository).getById(existingUser.getId());
-        verify(mockUserRepository, never()).delete(existingUser.getId());
+        verify(mockUserRepository, never()).delete(userToDeleteId);
     }
 
     @Test
@@ -158,5 +148,82 @@ class UserServiceImplTests {
         });
 
         verify(mockUserRepository, never()).update(any(User.class));
+    }
+
+    @Test
+    public void testSearchUsers(){
+        UserFilterOptions options = mock(UserFilterOptions.class);
+        List<User> expectedUsers = Collections.singletonList(mock(User.class));
+
+        when(mockUserRepository.searchUsers(options)).thenReturn(expectedUsers);
+
+        List<User> actualUsers = userService.searchUsers(options);
+
+        assertEquals(expectedUsers, actualUsers);
+        verify(mockUserRepository).searchUsers(options);
+    }
+
+    @Test
+    public void testGetUsers(){
+        List<User> expectedUsers = Collections.singletonList(mock(User.class));
+
+        when(mockUserRepository.getUsers()).thenReturn(expectedUsers);
+
+        List<User> actualUsers = userService.getUsers();
+
+        assertEquals(expectedUsers, actualUsers);
+        verify(mockUserRepository).getUsers();
+    }
+
+    @Test
+    public void testGetById(){
+
+        int userId = 100;
+        User user = Helpers.createMockUser();
+
+        when(mockUserRepository.getById(userId)).thenReturn(user);
+
+        User actualUser = userService.getById(user.getId());
+
+        assertEquals(user, actualUser);
+        verify(mockUserRepository).getById(userId);
+    }
+
+    @Test
+    public void testGetByUsername(){
+
+        String username = "mockUsername";
+
+        User expectedUser = Helpers.createMockUser();
+        when(mockUserRepository.getByUsername(username)).thenReturn(expectedUser);
+
+        User actualUser = userService.getByUsername(username);
+
+        assertEquals(expectedUser, actualUser);
+        verify(mockUserRepository).getByUsername(username);
+    }
+    @Test
+    void testSetPhoneNumber() {
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setPhoneNumber("123-456-7890");
+        when(mockUserRepository.setPhoneNumber(phoneNumber)).thenReturn(phoneNumber);
+
+        PhoneNumber result = userService.setPhoneNumber(phoneNumber);
+
+        assertEquals(phoneNumber, result);
+        verify(mockUserRepository).setPhoneNumber(phoneNumber);
+    }
+
+    @Test
+    void testGetPhoneNumber() {
+        int userId = 1;
+        PhoneNumber expectedPhoneNumber = new PhoneNumber();
+        expectedPhoneNumber.setPhoneNumber("123-456-7890");
+        when(mockUserRepository.getPhoneNumber(userId)).thenReturn(expectedPhoneNumber);
+
+        PhoneNumber actualPhoneNumber = userService.getPhoneNumber(userId);
+
+        assertEquals(expectedPhoneNumber, actualPhoneNumber);
+        verify(mockUserRepository).getPhoneNumber(userId);
     }
 }

@@ -29,4 +29,6 @@ public interface UserService {
     PhoneNumber setPhoneNumber(PhoneNumber phoneNumber);
 
     PhoneNumber getPhoneNumber(int userId);
+
+    User makeModerator(int userId);
 }

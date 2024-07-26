@@ -46,6 +46,141 @@ This is a Spring Boot-based forum project.
         }
         ```
 
+- **Get Phone Number by User ID**
+    - **URL:** `/api/users/phone-number/{id}`
+    - **Method:** `GET`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+    - **Response:**
+        ```json
+        {
+            "phoneNumber": "string"
+        }
+        ```
+
+- **Set Phone Number**
+    - **URL:** `/api/users/phone-number/{id}`
+    - **Method:** `POST`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+    - **Request Body:**
+        ```json
+        {
+            "phoneNumber": "string"
+        }
+        ```
+    - **Response:**
+        ```json
+        {
+            "phoneNumber": "string"
+        }
+        ```
+
+- **Make User Moderator**
+    - **URL:** `/api/users/moderator/{id}`
+    - **Method:** `PUT`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+    - **Response:**
+        ```json
+        {
+            "id": "integer",
+            "username": "string",
+            "isModerator": "boolean"
+        }
+        ```
+
+- **Update User**
+    - **URL:** `/api/users/{id}`
+    - **Method:** `PUT`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+    - **Request Body:**
+        ```json
+        {
+            "username": "string",
+            "email": "string",
+            "firstName": "string",
+            "lastName": "string"
+        }
+        ```
+    - **Response:**
+        ```json
+        {
+            "id": "integer",
+            "username": "string",
+            "email": "string",
+            "firstName": "string",
+            "lastName": "string"
+        }
+        ```
+
+- **Delete User**
+    - **URL:** `/api/users/{id}`
+    - **Method:** `DELETE`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+
+- **Block User**
+    - **URL:** `/api/users/{id}/block`
+    - **Method:** `PUT`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+
+- **Unblock User**
+    - **URL:** `/api/users/{id}/unblock`
+    - **Method:** `PUT`
+    - **Headers:**
+        ```json
+        {
+            "Authorization": "Bearer <token>"
+        }
+        ```
+
+- **Search Users**
+    - **URL:** `/api/users/search`
+    - **Method:** `GET`
+    - **Query Parameters:**
+        - `username` (optional)
+        - `email` (optional)
+        - `firstName` (optional)
+    - **Response:**
+        ```json
+        [
+            {
+                "id": "integer",
+                "username": "string",
+                "email": "string",
+                "firstName": "string",
+                "lastName": "string"
+            }
+        ]
+        ```
+
 ### Post Endpoints
 
 - **Create Post**
@@ -170,4 +305,4 @@ This is a Spring Boot-based forum project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details.

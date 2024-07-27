@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -75,5 +76,68 @@ public class PostControllerTests {
 
         assertEquals(post, actualPost);
         verify(postService).create(post, user);
+    }
+
+    @Test
+    void testAddLikeToPost_Success() {
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+
+        when(authenticationHelper.tryGetUser(any(HttpHeaders.class))).thenReturn(user);
+        when(postService.getPostById(post.getId())).thenReturn(post);
+        when(postService.addLike(post, user)).thenReturn(post);
+
+        Post actualPost = postController.addLikeToPost(new HttpHeaders(), post.getId());
+
+        assertEquals(post, actualPost);
+        verify(postService).addLike(post, user);
+    }
+
+    @Test
+    void testUpdatePost_Success(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        PostDto postDto = new PostDto();
+
+        when(authenticationHelper.tryGetUser(any(HttpHeaders.class))).thenReturn(user);
+        when(postMapper.fromDto(post.getId(), postDto)).thenReturn(post);
+        when(postService.update(post, user)).thenReturn(post);
+
+        Post actualPost = postController.update(new HttpHeaders(), post.getId(), postDto);
+
+        assertEquals(post, actualPost);
+        verify(postService).update(post, user);
+    }
+
+    @Test
+    void testDeletePost_Success(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+
+        when(authenticationHelper.tryGetUser(any(HttpHeaders.class))).thenReturn(user);
+        doNothing().when(postService).delete(post.getId(), user);
+
+        assertDoesNotThrow(() -> postController.delete(new HttpHeaders(), post.getId()));
+        verify(postService).delete(post.getId(), user);
+    }
+
+    @Test
+    void testGetTopCommentedPosts() {
+        List<Post> expectedPosts = Collections.singletonList(Helpers.createMockPost());
+        when(postService.getTopCommentedPosts()).thenReturn(expectedPosts);
+        List<Post> actualPosts = postController.getTopCommentedPosts();
+
+        assertEquals(expectedPosts, actualPosts);
+        verify(postService).getTopCommentedPosts();
+    }
+
+    @Test
+    void testGetRecentPosts(){
+        List<Post> expectedPosts = Collections.singletonList(Helpers.createMockPost());
+        when(postService.getRecentPosts()).thenReturn(expectedPosts);
+        List<Post> actualPosts = postController.getRecentPosts();
+
+        assertEquals(expectedPosts, actualPosts);
+        verify(postService).getRecentPosts();
     }
 }

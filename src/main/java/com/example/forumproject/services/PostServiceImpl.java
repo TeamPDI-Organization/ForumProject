@@ -71,7 +71,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void update(Post post, User user) {
+    public Post update(Post post, User user) {
         checkUserBlocked(user);
         checkModifyPermissions(post.getId(), user);
 
@@ -90,6 +90,8 @@ public class PostServiceImpl implements PostService {
         }
 
         postRepository.update(post);
+
+        return post;
     }
 
     @Override

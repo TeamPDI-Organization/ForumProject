@@ -1,6 +1,7 @@
 package com.example.forumproject.controllers;
 
 import com.example.forumproject.Helpers;
+import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.PostMapper;
 import com.example.forumproject.models.Post;
@@ -15,12 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class PostControllerTests {
@@ -107,6 +109,28 @@ public class PostControllerTests {
 
         assertEquals(post, actualPost);
         verify(postService).update(post, user);
+    }
+
+    @Test
+    void testUpdatePost_NotFound(){
+        User user = Helpers.createMockUser();
+        Post post = Helpers.createMockPost();
+        PostDto postDto = new PostDto();
+
+        post.setId(1);
+        when(authenticationHelper.tryGetUser(any(HttpHeaders.class))).thenReturn(user);
+        when(postMapper.fromDto(post.getId(), postDto)).thenReturn(post);
+        when(postService.update(post, user)).thenThrow(new EntityNotFoundException("Post", post.getId()));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            postController.update(new HttpHeaders(), post.getId(), postDto);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Post with id 1 not found.", exception.getReason());
+        verify(postService).update(post, user);
+
+
     }
 
     @Test

@@ -5,10 +5,8 @@ import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.PostMapper;
-import com.example.forumproject.models.PostFilterOptions;
-import com.example.forumproject.models.Post;
-import com.example.forumproject.models.PostDto;
-import com.example.forumproject.models.User;
+import com.example.forumproject.models.*;
+import com.example.forumproject.services.CommentService;
 import com.example.forumproject.services.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +23,16 @@ public class PostController {
 
     private final PostService service;
 
+    private final CommentService commentService;
+
     private final PostMapper postMapper;
 
     private final AuthenticationHelper authenticationHelper;
 
     @Autowired
-    public PostController(PostService service, PostMapper postMapper, AuthenticationHelper authenticationHelper) {
+    public PostController(PostService service, CommentService commentService, PostMapper postMapper, AuthenticationHelper authenticationHelper) {
         this.service = service;
+        this.commentService = commentService;
         this.postMapper = postMapper;
         this.authenticationHelper = authenticationHelper;
     }
@@ -53,6 +54,16 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @GetMapping("/{postId}/comments")
+    public List<Comment> getComments(@PathVariable int postId) {
+        try {
+            return commentService.getAllComments(postId);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 
     @PostMapping
     public Post createPost(@RequestHeader HttpHeaders headers, @Valid @RequestBody PostDto postDto) {

@@ -76,7 +76,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Post> getByUserId(int id) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Post> query = session.createQuery("from Post where createdBy = :id", Post.class);
+            Query<Post> query = session.createQuery("from Post where createdBy.id = :id", Post.class);
             query.setParameter("id", id);
             List<Post> posts = query.list();
             if (posts.isEmpty()) {

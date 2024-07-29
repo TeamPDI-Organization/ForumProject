@@ -39,6 +39,9 @@ public class User {
     @Column(name = "blocked")
     private boolean isBlocked;
 
+    @Column(name = "active")
+    private boolean isActive;
+
     public User() {
 
     }
@@ -120,6 +123,14 @@ public class User {
 
     public void setBlocked(boolean blocked) {
         isBlocked = blocked;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

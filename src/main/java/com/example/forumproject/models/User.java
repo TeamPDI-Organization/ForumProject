@@ -2,6 +2,7 @@ package com.example.forumproject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 
 import java.util.Objects;
 
@@ -27,6 +28,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Email
     @Column(name = "email")
     private String email;
 

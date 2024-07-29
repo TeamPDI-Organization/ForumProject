@@ -1,10 +1,12 @@
 package com.example.forumproject.models;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 public class UserDto {
+
     @NotNull
     @Unique
     @Size(min = 4, max = 32, message = "Username should be between 4 and 32 symbols")
@@ -16,6 +18,7 @@ public class UserDto {
 
     private String lastName;
 
+    @Email
     @Unique
     private String email;
 

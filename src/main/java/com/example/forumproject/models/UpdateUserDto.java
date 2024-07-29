@@ -1,5 +1,6 @@
 package com.example.forumproject.models;
 
+import jakarta.validation.constraints.Email;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 public class UpdateUserDto {
@@ -8,6 +9,7 @@ public class UpdateUserDto {
 
     private String lastName;
 
+    @Email
     @Unique
     private String email;
 

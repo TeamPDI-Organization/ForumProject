@@ -3,6 +3,7 @@ package com.example.forumproject.services;
 import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,4 +32,8 @@ public interface UserService {
     PhoneNumber getPhoneNumber(int userId);
 
     User makeModerator(int userId);
+
+    void updateProfilePicture(int userId, MultipartFile file);
+
+    byte[] getProfilePicture(int userId);
 }

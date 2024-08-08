@@ -44,6 +44,10 @@ public class User {
     @Column(name = "active")
     private boolean isActive;
 
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
+
     public User() {
 
     }
@@ -133,6 +137,14 @@ public class User {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     @Override

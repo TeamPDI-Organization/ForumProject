@@ -1,49 +1,31 @@
 package com.example.forumproject.models;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.checkerframework.common.aliasing.qual.Unique;
 
-public class UserDto {
+public class RegisterDto extends LoginDto {
 
-    @NotNull
-    @Unique
-    @Size(min = 4, max = 32, message = "Username should be between 4 and 32 symbols")
-    private String username;
+    @NotEmpty
+    private String passwordConfirm;
 
-    private String password;
-
+    @NotEmpty
     private String firstName;
 
+    @NotEmpty
     private String lastName;
 
-    @Email
-    @Unique
+    @NotEmpty
     private String email;
 
-    public UserDto(String username, String password, String firstName, String lastName, String email) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    public String getPasswordConfirm() {
+        return passwordConfirm;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
     public String getFirstName() {

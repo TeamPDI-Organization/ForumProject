@@ -1,8 +1,9 @@
-package com.example.forumproject.controllers;
+package com.example.forumproject.controllers.RestControllers;
 
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.exceptions.FileLimitationsException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.PhoneNumberMapper;
 import com.example.forumproject.helpers.UpdateUserMapper;
@@ -13,7 +14,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -75,11 +79,11 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
-        User user = userMapper.fromDto(userDto);
+    public RegisterDto create(@Valid @RequestBody RegisterDto registerDto) {
+        User user = userMapper.fromDto(registerDto);
         try {
             userService.create(user);
-            return userDto;
+            return registerDto;
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (EntityDuplicateException e) {
@@ -198,4 +202,22 @@ public class UserController {
         return userService.searchUsers(options);
     }
 
+    @PostMapping("/profile-picture")
+    public ResponseEntity<Void> uploadProfilePicture(@RequestHeader HttpHeaders headers,
+                                                     @RequestParam("file") MultipartFile file) {
+        try {
+            User user = authenticationHelper.tryGetUser(headers);
+            userService.updateProfilePicture(user.getId(), file);
+
+            return ResponseEntity.ok().build();
+        } catch (FileLimitationsException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @GetMapping("/{userId}/profile-picture")
+    public ResponseEntity<byte[]> getProfilePicture(@Valid @PathVariable int userId) {
+        byte[] image = userService.getProfilePicture(userId);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+    }
 }

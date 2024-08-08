@@ -1,7 +1,6 @@
 package com.example.forumproject.services;
 
 import com.example.forumproject.Helpers;
-import com.example.forumproject.controllers.UserController;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
@@ -10,7 +9,6 @@ import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.repositories.UserRepository;
-import com.example.forumproject.services.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -4,6 +4,7 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.User;
 import com.example.forumproject.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,45 @@ public class AuthenticationHelper {
         } catch (EntityNotFoundException | ArrayIndexOutOfBoundsException e) {
             throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
         }
+    }
+
+    public User tryGetCurrentUser(HttpSession session) {
+        String currentUsername = (String) session.getAttribute("currentUser");
+
+        if (currentUsername == null) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
+        }
+
+        return userService.getByUsername(currentUsername);
+    }
+
+    public User verifyAuthentication(String username, String password) {
+        try {
+            User user = userService.getByUsername(username);
+            if (!user.getPassword().equals(password)) {
+                throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
+            }
+            return user;
+        } catch (EntityNotFoundException e) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
+        }
+    }
+
+    private String getUsername(String userInfo) {
+        int firstSpace = userInfo.indexOf(" ");
+        if (firstSpace == -1) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
+        }
+
+        return userInfo.substring(0, firstSpace);
+    }
+
+    private String getPassword(String userInfo) {
+        int firstSpace = userInfo.indexOf(" ");
+        if (firstSpace == -1) {
+            throw new AuthorizationException(INVALID_AUTHENTICATION_ERROR);
+        }
+
+        return userInfo.substring(firstSpace + 1);
     }
 }

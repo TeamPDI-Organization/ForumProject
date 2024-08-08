@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | About</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+    <header>
+        <nav>
+            <ul th:replace="~{HomeView :: headButtons}"></ul>
+        </nav>
+        <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+        </nav>
+    </header>
+</header>
+
+<div style="margin-top: 60px;">
+    <h2>About CryptoHive</h2>
+    <p></p>
+</div>
+
+<footer>
+    <small>©️ Copyright 2024, CryptoHive</small>
+</footer>
+</body>
+</html>

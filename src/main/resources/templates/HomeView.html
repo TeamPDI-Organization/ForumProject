@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+    <nav>
+        <ul class="head-buttons" th:fragment="headButtons">
+            <li><a th:href="@{/}">CryptoHive</a></li>
+            <li><a th:href="@{/posts}">Posts</a></li>
+            <li><a th:href="@{/about}">About</a></li>
+        </ul>
+    </nav>
+    <nav>
+        <ul class="auth-buttons" th:fragment="authButtons">
+            <li><a th:if="${!isAuthenticated}" th:href="@{/auth/login}" href="#">Login</a></li>
+            <li><a th:if="${!isAuthenticated}" th:href="@{/auth/register}" href="#">Register</a></li>
+            <li><a th:if="${isAuthenticated}" th:href="@{/auth/logout}" href="#">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div style="margin-top: 60px;">
+    <h2>Welcome to CryptoHive</h2>
+    <h2 th:if="${isAuthenticated}" th:text="${session.currentUser}"></h2>
+    <p>Exchange skills with crypto traders from all around the world.</p>
+</div>
+
+<footer>
+    <small>©️ Copyright 2024, CryptoHive</small>
+</footer>
+</body>
+</html>

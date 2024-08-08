@@ -3,6 +3,7 @@ package com.example.forumproject.services;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
+import com.example.forumproject.exceptions.FileLimitationsException;
 import com.example.forumproject.models.PhoneNumber;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
@@ -10,7 +11,9 @@ import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -127,6 +130,27 @@ public class UserServiceImpl implements UserService{
     @Override
     public User makeModerator(int userId) {
         return userRepository.makeModerator(userId);
+    }
+
+    @Override
+    public void updateProfilePicture(int userId, MultipartFile file) {
+        try {
+            User user = userRepository.getById(userId);
+            user.setProfilePicture(file.getBytes());
+        } catch (IOException e) {
+            throw new FileLimitationsException("Profile picture doesn't match the requirements.");
+        }
+    }
+
+    @Override
+    public byte[] getProfilePicture(int userId) {
+        try {
+            User user = userRepository.getById(userId);
+            return user.getProfilePicture();
+
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("User", userId);
+        }
     }
 
 }

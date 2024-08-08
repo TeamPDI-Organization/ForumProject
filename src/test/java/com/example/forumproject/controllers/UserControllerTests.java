@@ -1,6 +1,7 @@
 package com.example.forumproject.controllers;
 
 import com.example.forumproject.Helpers;
+import com.example.forumproject.controllers.RestControllers.UserController;
 import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;

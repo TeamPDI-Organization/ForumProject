@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | Post</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body class="background">
+<header>
+    <nav>
+        <ul th:replace="~{HomeView :: headButtons}"></ul>
+    </nav>
+    <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+    </nav>
+</header>
+<h1>Post</h1>
+
+<div style="margin-top: 60px">
+    <h2 th:text="${post.title}">Post Title</h2>
+    <h3 th:text="${post.content}">Post Content</h3>
+
+    <form th:action="@{/posts/{id}/comment(id=${post.id})}" method="post">
+        <label for="comment">Comment</label>
+        <br/>
+        <input type="text" id="comment" name="comment"/>
+        <input type="submit" value="Comment"/>
+    </form>
+
+    <form th:action="@{/posts/{id}/update(id=${post.id})}" method="get" style="display: inline">
+        <button class="button" type="submit">Update Post</button>
+    </form>
+
+    <form th:action="@{/posts/delete/{id}(id=${post.id})}" method="post" style="display:inline">
+        <input type="hidden" name="_method" value="delete"/>
+        <input type="submit" value="Delete" class="button"/>
+    </form>
+</div>
+
+<h2>Comments</h2>
+
+<div th:each="comment : ${post.comments}">
+    <p th:text="${comment.content}">Comment</p>
+    <p>Author: <span th:text="${comment.createdBy.username}">Author</span></p>
+    <p>Posted on: <span th:text="${comment.creationDate}">Date</span></p>
+</div>
+
+<footer>
+    <small>©️ Copyright 2024, CryptoHive</small>
+</footer>
+</body>
+</html>

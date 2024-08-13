@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | New Post</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body class="background">
+<header>
+    <nav>
+        <ul th:replace="~{HomeView :: headButtons}"></ul>
+    </nav>
+    <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+    </nav>
+</header>
+<div class="create-post-frame">
+    <h1>New Post</h1>
+    <form th:fragment="post-form" action="#" th:action="@{__${requestURI}__}"
+          th:object="${post}" method="post">
+        <label th:text="#{post.title}">Title</label>
+        <br/>
+        <input type="text" th:field="*{title}"/>
+        <label class="error" th:errors="*{title}">Title error placeholder</label>
+        <br/><br/>
+
+        <label th:text="#{post.content}">Content</label>
+        <br/>
+        <input type="text" th:field="*{content}">
+        <label class="error" th:errors="*{content}">Content error placeholder</label>
+        <br/><br/>
+
+        <input type="submit" value="Save">
+    </form>
+</div>
+<footer>
+    <small>©️ Copyright 2024, CryptoHive</small>
+</footer>
+</body>
+</html>

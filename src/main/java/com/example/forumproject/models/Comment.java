@@ -10,6 +10,7 @@ import java.util.Objects;
 @Table(name = "comments")
 public class Comment {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -18,7 +19,6 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "createdby_id")
     private User createdBy;

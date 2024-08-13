@@ -5,7 +5,7 @@
     <title>CryptoHive | Home</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
 </head>
-<body>
+<body class="background">
 <header>
     <nav>
         <ul class="head-buttons" th:fragment="headButtons">
@@ -24,7 +24,7 @@
 </header>
 
 <div style="margin-top: 60px;">
-    <h2>Welcome to CryptoHive</h2>
+    <h1>Welcome to CryptoHive</h1>
     <h2 th:if="${isAuthenticated}" th:text="${session.currentUser}"></h2>
     <p>Exchange skills with crypto traders from all around the world.</p>
 </div>

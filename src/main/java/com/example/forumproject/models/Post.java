@@ -28,7 +28,7 @@ public class Post {
     private User createdBy;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @Column(name = "creation_date")

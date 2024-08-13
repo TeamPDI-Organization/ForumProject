@@ -6,7 +6,6 @@ body {
     height: 100vh;
     margin: 0;
     overflow: hidden;
-    background-color: black;
     color: white;
 }
 
@@ -173,6 +172,34 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     height: 650px;
     border: 5px solid white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.new-post-button {
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border: 2px solid white;
+    border-radius: 10px;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+.new-post-button:hover {
+    background-color: darkorange;
+    color: black;
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
 }
 
 .post-container {

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body class="background">
+<header>
+    <header>
+        <nav>
+            <ul th:replace="~{HomeView :: headButtons}"></ul>
+        </nav>
+        <nav>
+            <ul th:replace="~{HomeView :: authButtons}"></ul>
+        </nav>
+    </header>
+</header>
+<div class="login-frame">
+    <h1>Login</h1>
+    <form action="#" th:action="@{/auth/login}" th:object="${login}" method="post">
+        <label th:text="#{user.label.username}">Username</label>
+        <br/>
+        <input type="text" th:field="*{username}"/>
+        <label class="error" th:errors="*{username}">Username Error Placeholder</label>
+        <br/><br/>
+
+        <label th:text="#{user.label.password}">Password</label>
+        <br/>
+        <input type="password" th:field="*{password}">
+        <label class="error" th:errors="*{password}">Password Error Placeholder</label>
+        <br/><br/>
+
+        <input type="submit" value="Login">
+    </form>
+    <p>Don't have an account? <a th:href="@{/auth/register}">Register</a></p>
+</div>
+</body>
+</html>

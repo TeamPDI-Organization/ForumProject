@@ -27,13 +27,10 @@
             <p>Posted on: <span th:text="${post.creationDate}"></span></p>
             <div class="post-actions">
                 <a th:href="@{/posts/{id}(id=${post.id})}">Comments</a>
-                <a th:href="@{/posts/edit/{id}(id=${post.id})}">Edit</a>
-                <a th:href="@{/posts/delete/{id}(id=${post.id})}">Delete</a>
             </div>
         </div>
     </div>
 </div>
-
 <footer>
     <small>©️ Copyright 2024, CryptoHive</small>
 </footer>

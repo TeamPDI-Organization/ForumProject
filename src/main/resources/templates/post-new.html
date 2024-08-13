@@ -26,7 +26,7 @@
 
         <label th:text="#{post.content}">Content</label>
         <br/>
-        <input type="text" th:field="*{content}">
+        <textarea type="text" th:field="*{content}"></textarea>
         <label class="error" th:errors="*{content}">Content error placeholder</label>
         <br/><br/>
 

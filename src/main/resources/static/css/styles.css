@@ -214,25 +214,13 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     text-decoration: underline;
 }
 
-
-.toggle-comments {
-    display: none;
-}
-
-.toggle-comments + label {
-    cursor: pointer;
-    color: blue;
-    text-decoration: underline;
-}
-
-.toggle-comments:checked + label + .comments-section {
-    display: block;
-}
-
-.comments-section {
-    display: none;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
+.login-frame, .registration-frame, .create-post-frame, .update-post-frame {
+    border: 2px solid white;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    margin: 20px;
+    width: 300px;
+    text-align: center;
 }

@@ -27,7 +27,7 @@
             <button class="button" type="submit">Update Post</button>
         </form>
 
-        <form th:action="@{/posts/delete/{id}(id=${post.id})}" method="post" style="display:inline">
+        <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display:inline">
             <input type="hidden" name="_method" value="delete"/>
             <input type="submit" value="Delete" class="button"/>
         </form>

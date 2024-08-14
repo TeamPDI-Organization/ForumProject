@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -38,6 +39,10 @@ public class Post {
     protected void onCreate() {
         this.creationDate = LocalDateTime.now();
     }
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "likedPosts", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<User> likes;
 
     public Post() {
 
@@ -95,6 +100,14 @@ public class Post {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
     }
 
     @Override

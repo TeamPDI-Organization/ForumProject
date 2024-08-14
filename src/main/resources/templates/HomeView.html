@@ -17,7 +17,6 @@
     <nav>
         <ul class="auth-buttons" th:fragment="authButtons">
             <li><a th:if="${!isAuthenticated}" th:href="@{/auth/login}" href="#">Login</a></li>
-            <li><a th:if="${!isAuthenticated}" th:href="@{/auth/register}" href="#">Register</a></li>
             <li><a th:if="${isAuthenticated}" th:href="@{/auth/logout}" href="#">Logout</a></li>
         </ul>
     </nav>

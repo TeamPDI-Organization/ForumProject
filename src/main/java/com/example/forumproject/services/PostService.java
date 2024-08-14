@@ -22,7 +22,9 @@ public interface PostService {
 
     void delete(int id, User user);
 
-    Post addLike(Post post, User user);
+    void like(Post post, User user);
+
     List<Post> getTopCommentedPosts();
+
     List<Post> getRecentPosts();
 }

@@ -102,8 +102,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post addLike(Post post, User user) {
-        return postRepository.addLike(post, user);
+    public void like(Post post, User user) {
+        checkUserBlocked(user);
+        if (post.getLikes().contains(user)) {
+            post.getLikes().remove(user);
+            user.getLikedPosts().remove(post);
+        } else {
+            post.getLikes().add(user);
+            user.getLikedPosts().add(post);
+        }
+
+        postRepository.update(post);
+        userService.update(user, user);
     }
 
     @Override

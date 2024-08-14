@@ -1,9 +1,7 @@
 package com.example.forumproject.repositories;
 
-import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.models.PostFilterOptions;
-import com.example.forumproject.models.Like;
 import com.example.forumproject.models.Post;
 import com.example.forumproject.models.User;
 import org.hibernate.Session;
@@ -137,28 +135,6 @@ public class PostRepositoryImpl implements PostRepository {
             session.beginTransaction();
             session.remove(postToDelete);
             session.getTransaction().commit();
-        }
-    }
-
-    @Override
-    public Post addLike(Post post, User user) {
-        try (Session session = sessionFactory.openSession()) {
-            Query<Like> query = session.createQuery("from Like where post =: postId and user = :userId",
-                    Like.class);
-            query.setParameter("postId", post.getId());
-            query.setParameter("userId", user.getId());
-
-            List<Like> result = query.list();
-            if (!result.isEmpty()) {
-                throw new EntityDuplicateException("Like", "current", "id");
-            }
-            Like like = new Like();
-            like.setPost(post);
-            like.setUser(user);
-            session.beginTransaction();
-            session.persist(like);
-            session.getTransaction().commit();
-            return post;
         }
     }
 

@@ -56,8 +56,15 @@ public class PostMvcController {
     }
 
     @GetMapping()
-    public String showAllPosts(PostFilterOptions filterOptions, Model model) {
-        List<Post> posts = postService.getPosts(filterOptions);
+    public String showAllPosts(PostFilterOptions filterOptions, Model model, HttpSession session) {
+        List<Post> posts;
+
+        if (populateIsAuthenticated(session)) {
+            posts = postService.getPosts(filterOptions);
+        } else {
+            posts = postService.getRecentPosts();
+        }
+
         model.addAttribute("posts", posts);
 
         return "PostsView";
@@ -174,6 +181,24 @@ public class PostMvcController {
             return "not-found";
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/{id}/like")
+    public String likePost(@PathVariable int id, HttpSession session) {
+        User user;
+        try {
+            user = authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            Post post = postService.getPostById(id);
+            postService.like(post, user);
+            return "redirect:/posts";
+        } catch (EntityNotFoundException e) {
+            return "not-found";
         }
     }
 }

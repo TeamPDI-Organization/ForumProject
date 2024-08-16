@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>CryptoHive | Update Comment</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+  <nav>
+    <ul th:replace="~{HomeView :: headButtons}"></ul>
+  </nav>
+  <nav>
+    <ul th:replace="~{HomeView :: authButtons}"></ul>
+  </nav>
+</header>
+
+<div class="update-comment-frame">
+  <h1>Update Comment</h1>
+
+  <form action="/comments/{id}/update" method="post">
+    <input type="hidden" name="id" th:value="${comment.id}">
+    <div>
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="4" cols="50" th:text="${comment.content}"></textarea>
+    </div>
+    <div>
+      <button type="submit">Update Comment</button>
+    </div>
+  </form>
+</div>
+
+<footer>
+  <small>©️ Copyright 2024, CryptoHive</small>
+</footer>
+</body>
+</html>

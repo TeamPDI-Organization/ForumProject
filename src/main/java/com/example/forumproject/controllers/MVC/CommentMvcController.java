@@ -9,6 +9,7 @@ import com.example.forumproject.services.CommentService;
 import com.example.forumproject.services.PostService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class CommentMvcController {
         this.postMapper = postMapper;
     }
 
-    @PostMapping ("/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String deleteComment(@PathVariable int id, HttpSession session) {
         User user;
         try {
@@ -51,6 +52,39 @@ public class CommentMvcController {
         } catch (AuthorizationException e) {
             return "unauthorized-user";
         }
+    }
 
+    @GetMapping("/{id}/update")
+    public String showUpdateComment(@PathVariable int id, HttpSession session) {
+        User user;
+        try {
+            user = authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            commentService.getCommentById(id);
+            return "comment-update"; // Return the view name directly
+        } catch (AuthorizationException e) {
+            return "unauthorized-user";
+        }
+    }
+
+    @PostMapping("/{id}/update")
+    public String updateComment(@PathVariable int id, HttpSession session) {
+        User user;
+        try {
+            user = authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            commentService.update(commentService.getCommentById(id), user);
+            return "redirect:/";
+        } catch (AuthorizationException e) {
+            return "unauthorized-user";
+        }
     }
 }

@@ -178,7 +178,7 @@ public class PostMvcController {
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
-            return "redirect:/auth/login";
+            return "unauthorized-user";
         }
 
         try {

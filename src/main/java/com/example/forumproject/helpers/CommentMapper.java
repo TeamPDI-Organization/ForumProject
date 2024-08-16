@@ -17,11 +17,12 @@ public class CommentMapper {
         this.postService = postService;
     }
 
-    public Comment fromDto(CommentDto commentDto, User user, int postId) {
+    public Comment fromDto(CommentDto commentDto, User user, Post post) {
         Comment comment = new Comment();
         comment.setContent(commentDto.getContent());
         comment.setCreatedBy(user);
-        comment.setPost(postService.getPostById(postId));
+        comment.setPost(post);
+
         return comment;
     }
 }

@@ -29,11 +29,11 @@
             <p>Posted on: <span th:text="${post.creationDate}"></span></p>
             <p>Likes: <span th:text="${post.likes.size()}"></span></p>
             <div class="post-actions">
-                <form th:action="@{/posts/{id}/like(id=${post.id})}" method="post" style="display:inline">
+                <form th:if="${isAuthenticated}" th:action="@{/posts/{id}/like(id=${post.id})}" method="post" style="display:inline">
                     <input type="hidden" name="_method" value="Like"/>
                     <input type="submit" value="Like" class="button"/>
                 </form>
-                <form th:action="@{/posts/{id}(id=${post.id})}" method="get" style="display: inline">
+                <form th:if="${isAuthenticated}" th:action="@{/posts/{id}(id=${post.id})}" method="get" style="display: inline">
                     <button class="button" type="submit">Comments</button>
                 </form>
             </div>

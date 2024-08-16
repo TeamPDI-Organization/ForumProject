@@ -16,7 +16,6 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private static final String MODIFY_POST_ERROR_MESSAGE = "Only admin/moderator or post creator can modify a post.";
-    private static final String BLOCKED_USER_ERROR_MESSAGE = "User is blocked and cannot perform this action.";
 
 
     private final PostRepository postRepository;
@@ -51,7 +50,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post create(Post post, User user) {
-        checkUserBlocked(user);
 
         boolean duplicateExists = true;
 
@@ -72,8 +70,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post update(Post post, User user) {
-        checkUserBlocked(user);
-        checkModifyPermissions(post.getId(), user);
+        if (!post.getCreatedBy().equals(user)) {
+            throw new AuthorizationException(String.format("User %s is not the creator of the post", user.getUsername()));
+        }
 
         boolean duplicateExists = true;
         try {
@@ -96,14 +95,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void delete(int id, User user) {
-        checkUserBlocked(user);
         checkModifyPermissions(id, user);
         postRepository.delete(id);
     }
 
     @Override
     public void like(Post post, User user) {
-        checkUserBlocked(user);
         if (post.getLikes().contains(user)) {
             post.getLikes().remove(user);
             user.getLikedPosts().remove(post);
@@ -130,12 +127,6 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.getPostById(postId);
         if (!(user.isAdmin() || user.isModerator() || post.getCreatedBy().equals(user))) {
             throw new AuthorizationException(MODIFY_POST_ERROR_MESSAGE);
-        }
-    }
-
-    private void checkUserBlocked(User user) {
-        if (user.isBlocked()) {
-            throw new AuthorizationException(BLOCKED_USER_ERROR_MESSAGE);
         }
     }
 }

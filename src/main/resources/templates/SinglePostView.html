@@ -24,7 +24,7 @@
 
     <div class="post-button-container">
         <form th:action="@{/posts/{id}/update(id=${post.id})}" method="get" style="display: inline">
-            <button class="button" type="submit">Update Post</button>
+            <button class="button" type="submit">Edit Post</button>
         </form>
 
         <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display:inline">
@@ -40,16 +40,31 @@
                 <p th:text="${comment.content}">Comment</p>
                 <p>Author: <span th:text="${comment.createdBy.username}">Author</span></p>
                 <p>Posted on: <span th:text="${comment.creationDate}">Date</span></p>
+                <div class="comment-actions">
+                    <form th:action="@{/comments/{id}/update(id=${comment.id})}" method="get" style="display: inline">
+                        <button class="button" type="submit">Edit</button>
+                    </form>
+                    <form th:action="@{/comments/{id}/delete(id=${comment.id})}" method="post" style="display:inline">
+                        <input type="hidden" name="_method" value="delete"/>
+                        <input type="submit" value="Delete" class="button"/>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <form th:action="@{/posts/{id}/comment(id=${post.id})}" method="post">
-        <label for="comment">Comment</label>
-        <br/>
-        <input type="text" id="comment" name="comment"/>
-        <input type="submit" value="Comment"/>
-    </form>
+    <div class="comment-form-container">
+        <h3>Add a Comment</h3>
+        <form th:action="@{/posts/{id}/comment(id=${post.id})}" th:object="${comment}" method="post">
+            <div class="form-group">
+                <label for="content">Content:</label>
+                <textarea id="content" th:field="*{content}" placeholder="Write your comment here"></textarea>
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
 
 </div>
 <footer>

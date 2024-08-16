@@ -4,6 +4,7 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
+import com.example.forumproject.helpers.CommentMapper;
 import com.example.forumproject.helpers.PostMapper;
 import com.example.forumproject.models.*;
 import com.example.forumproject.services.CommentService;
@@ -27,14 +28,17 @@ public class PostMvcController {
 
     private final PostMapper postMapper;
 
+    private final CommentMapper commentMapper;
+
     private final AuthenticationHelper authenticationHelper;
 
     public PostMvcController(PostService postService, CommentService commentService,
-                             PostMapper postMapper,
+                             PostMapper postMapper, CommentMapper commentMapper,
                              AuthenticationHelper authenticationHelper) {
         this.postService = postService;
         this.commentService = commentService;
         this.postMapper = postMapper;
+        this.commentMapper = commentMapper;
         this.authenticationHelper = authenticationHelper;
     }
 
@@ -48,6 +52,7 @@ public class PostMvcController {
         try {
             Post post = postService.getPostById(id);
             model.addAttribute("post", post);
+            model.addAttribute("comment", new CommentDto());
 
             return "SinglePostView";
         } catch (EntityNotFoundException e) {
@@ -161,6 +166,8 @@ public class PostMvcController {
         } catch (EntityDuplicateException e) {
             errors.rejectValue("title", "duplicate", "Post with this title already exists");
             return "post-update";
+        } catch (AuthorizationException e) {
+            return "unauthorized-user";
         }
     }
 
@@ -199,6 +206,40 @@ public class PostMvcController {
             return "redirect:/posts";
         } catch (EntityNotFoundException e) {
             return "not-found";
+        }
+    }
+
+    @GetMapping("/{id}/comment")
+    public String showCommentForm(@PathVariable int id, Model model) {
+        model.addAttribute("comment", new CommentDto());
+        return "redirect:/posts/%d".formatted(id);
+    }
+
+    @PostMapping("/{id}/comment")
+    public String createComment(@PathVariable int id, @Valid @ModelAttribute("comment") CommentDto commentDto,
+                                BindingResult errors, HttpSession session) {
+
+        User user;
+        try {
+            user = authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+
+        if (errors.hasErrors()) {
+            return "redirect:/posts/%d".formatted(id);
+        }
+
+        try {
+            Post post = postService.getPostById(id);
+            Comment comment = commentMapper.fromDto(commentDto, user, post);
+            commentService.createComment(comment);
+            post.getComments().add(comment);
+            return "redirect:/posts/%d".formatted(id);
+        } catch (EntityNotFoundException e) {
+            return "not-found";
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
         }
     }
 }

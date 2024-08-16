@@ -47,13 +47,12 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public Comment delete(Comment comment) {
+    public void delete(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.remove(comment);
             session.getTransaction().commit();
         }
-        return comment;
     }
 
     @Override
@@ -70,12 +69,11 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public Comment createComment(Comment comment) {
+    public void createComment(Comment comment) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.persist(comment);
             session.getTransaction().commit();
         }
-        return comment;
     }
 }

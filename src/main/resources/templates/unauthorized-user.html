@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | Unauthorized</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+    <nav>
+        <ul th:replace="~{HomeView :: headButtons}"></ul>
+    </nav>
+    <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+    </nav>
+</header>
+
+<h1 th:text="#{error.unauthorized}">Unauthorized</h1>
+</body>
+</html>

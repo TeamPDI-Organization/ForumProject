@@ -10,6 +10,10 @@ public class LoginDto {
     @NotEmpty
     private String password;
 
+    public LoginDto() {
+
+    }
+
     public String getUsername() {
         return username;
     }

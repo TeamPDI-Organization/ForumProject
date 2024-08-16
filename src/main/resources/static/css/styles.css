@@ -8,7 +8,9 @@ body {
     overflow: hidden;
     color: white;
     background-image: url("../images/background.jpg");
-    background-size: cover;
+    background-size: cover !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
 }
 
 header {
@@ -78,7 +80,7 @@ a {
     color: white;
 }
 
-.about-content-wrapper {
+.about-content-wrapper, .home-content-wrapper {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -92,12 +94,6 @@ footer {
     padding: 10px 50px;
     border-top: 1px solid #dee2e6;
     background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-}
-
-.body-content {
-    text-align: center;
-    padding: 10px 50px 50px 50px;
     color: white;
 }
 
@@ -391,4 +387,27 @@ button:hover, input[type="submit"]:hover {
     margin-bottom: 10px;
     color: black;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.comment-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    margin-right: 10px;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.form-group textarea {
+    flex-grow: 1;
 }

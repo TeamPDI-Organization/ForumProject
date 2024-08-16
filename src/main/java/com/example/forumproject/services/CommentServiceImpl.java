@@ -13,8 +13,6 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
 
-    private static final String BLOCKED_USER_ERROR_MESSAGE = "User is blocked and cannot perform this action.";
-
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -28,7 +26,10 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public Comment createComment(Comment comment) {
-        return commentRepository.createComment(comment);
+
+        commentRepository.createComment(comment);
+
+        return comment;
     }
 
     @Override
@@ -38,20 +39,16 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public Comment update(Comment comment, User user) {
-        checkUserBlocked(user);
         checkIfUpdaterIsSameAsCreator(user, comment);
         return commentRepository.update(comment);
     }
 
     @Override
-    public Comment deleteComment(Comment comment, User user){
-        checkUserBlocked(user);
+    public void deleteComment(Comment comment, User user){
         if (!(checkIfUpdaterIsSameAsCreator(user, comment) || checkIfUserIsAdminOrModerator(user))){
             throw new AuthorizationException("You do not have permission to delete this comment");
         }
-
-
-        return commentRepository.delete(comment);
+        commentRepository.delete(comment);
     }
 
     private boolean checkIfUpdaterIsSameAsCreator(User user, Comment comment) {
@@ -66,11 +63,5 @@ public class CommentServiceImpl implements CommentService{
         }
 
         return false;
-    }
-
-    private void checkUserBlocked(User user) {
-        if (user.isBlocked()) {
-            throw new AuthorizationException(BLOCKED_USER_ERROR_MESSAGE);
-        }
     }
 }

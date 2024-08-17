@@ -4,15 +4,20 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.CommentMapper;
 import com.example.forumproject.helpers.PostMapper;
+import com.example.forumproject.models.Comment;
+import com.example.forumproject.models.CommentDto;
 import com.example.forumproject.models.User;
 import com.example.forumproject.services.CommentService;
 import com.example.forumproject.services.PostService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/comments")
@@ -55,24 +60,29 @@ public class CommentMvcController {
     }
 
     @GetMapping("/{id}/update")
-    public String showUpdateComment(@PathVariable int id, HttpSession session) {
-        User user;
+    public String showUpdateComment(@PathVariable int id, Model model, HttpSession session) {
+
+
         try {
-            user = authenticationHelper.tryGetCurrentUser(session);
+            authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
 
         try {
-            commentService.getCommentById(id);
-            return "comment-update"; // Return the view name directly
+            Comment comment = commentService.getCommentById(id);
+            CommentDto commentDto = commentMapper.toDto(comment);
+            model.addAttribute("comment", commentDto);
+            return "comment-update";
         } catch (AuthorizationException e) {
             return "unauthorized-user";
         }
     }
 
     @PostMapping("/{id}/update")
-    public String updateComment(@PathVariable int id, HttpSession session) {
+    public String updateComment(@PathVariable int id, @Valid @ModelAttribute("comment") CommentDto commentDto,
+                                BindingResult errors,
+                                HttpSession session) {
         User user;
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
@@ -80,11 +90,62 @@ public class CommentMvcController {
             return "redirect:/auth/login";
         }
 
+        if (errors.hasErrors()) {
+            return "comment-update";
+        }
+
         try {
-            commentService.update(commentService.getCommentById(id), user);
-            return "redirect:/";
+            Comment existingComment = commentService.getCommentById(id);
+            Comment comment = commentMapper.fromDto(commentDto, user, existingComment.getPost());
+            comment.setId(id);
+            commentService.update(comment, user);
+            return "redirect:/posts/%d".formatted(comment.getPost().getId());
         } catch (AuthorizationException e) {
             return "unauthorized-user";
         }
+    }
+
+    @GetMapping("/{id}/check-creator")
+    @ResponseBody
+    public boolean checkCommentCreator(@PathVariable int id, HttpSession session) {
+        User user;
+        try {
+            user = authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            return false;
+        }
+
+        try {
+            Comment comment = commentService.getCommentById(id);
+            return comment.getCreatedBy().equals(user);
+        } catch (AuthorizationException e) {
+            return false;
+        }
+    }
+
+    @GetMapping("/current-user-id")
+    @ResponseBody
+    public Integer getCurrentUserId(HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            return user.getId();
+        } catch (AuthorizationException e) {
+            return null;
+        }
+    }
+
+    @GetMapping("/current-user-roles")
+    @ResponseBody
+    public Map<String, Boolean> getCurrentUserRoles(HttpSession session) {
+        Map<String, Boolean> roles = new HashMap<>();
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            roles.put("isAdmin", user.isAdmin());
+            roles.put("isModerator", user.isModerator());
+        } catch (AuthorizationException e) {
+            roles.put("isAdmin", false);
+            roles.put("isModerator", false);
+        }
+        return roles;
     }
 }

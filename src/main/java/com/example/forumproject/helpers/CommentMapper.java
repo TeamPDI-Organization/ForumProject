@@ -25,4 +25,11 @@ public class CommentMapper {
 
         return comment;
     }
+
+    public CommentDto toDto(Comment comment) {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setContent(comment.getContent());
+
+        return commentDto;
+    }
 }

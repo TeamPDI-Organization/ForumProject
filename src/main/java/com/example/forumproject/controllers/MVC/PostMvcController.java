@@ -79,7 +79,7 @@ public class PostMvcController {
     public String getCommentsForPost(@PathVariable int id, Model model) {
         List<Comment> comments = commentService.getAllComments(id);
         model.addAttribute("comments", comments);
-        return "PostsView : comments-section";
+        return "SinglePostView : comments-feed";
     }
 
     @GetMapping("/new")
@@ -178,7 +178,7 @@ public class PostMvcController {
         try {
             user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "redirect:/auth/login";
         }
 
         try {
@@ -187,7 +187,7 @@ public class PostMvcController {
         } catch (EntityNotFoundException e) {
             return "not-found";
         } catch (AuthorizationException e) {
-            return "redirect:/auth/login";
+            return "unauthorized-user";
         }
     }
 

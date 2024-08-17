@@ -16,18 +16,18 @@
 </header>
 
 <div class="single-post-frame">
-    <h1>Post</h1>
 
-
-    <h2 th:text="${post.title}">Post Title</h2>
-    <h3 th:text="${post.content}">Post Content</h3>
+    <h1 th:text="${post.title}">Post Title</h1>
+    <div class="scrollable-content">
+        <h2 class="scrollable-content-text" th:text="${post.content}">Post Content</h2>
+    </div>
 
     <div class="post-button-container">
-        <form th:action="@{/posts/{id}/update(id=${post.id})}" method="get" style="display: inline">
-            <button class="button" type="submit">Edit Post</button>
+        <form class="update-post-button" th:attr="data-id=${post.id}, data-title=${post.title}, data-content=${post.content}, data-creator-id=${post.createdBy.id}" style="display: inline">
+            <button class="button" type="button">Update</button>
         </form>
 
-        <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display:inline">
+        <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" class="delete-post-button" th:attr="data-creator-id=${post.createdBy.id}" style="display:inline">
             <input type="hidden" name="_method" value="delete"/>
             <input type="submit" value="Delete" class="button"/>
         </form>
@@ -41,10 +41,8 @@
                 <p>Author: <span th:text="${comment.createdBy.username}">Author</span></p>
                 <p>Posted on: <span th:text="${comment.creationDate}">Date</span></p>
                 <div class="comment-actions">
-                    <form th:action="@{/comments/{id}/update(id=${comment.id})}" method="get" style="display: inline">
-                        <button class="button" type="submit">Edit</button>
-                    </form>
-                    <form th:action="@{/comments/{id}/delete(id=${comment.id})}" method="post" style="display:inline">
+                    <a href="#editCommentModal" class="edit-comment-button" th:attr="data-id=${comment.id}, data-content=${comment.content}, data-creator-id=${comment.createdBy.id}">Edit</a>
+                    <form th:action="@{/comments/{id}/delete(id=${comment.id})}" method="post" class="delete-comment-form" th:attr="data-creator-id=${comment.createdBy.id}" style="display:inline">
                         <input type="hidden" name="_method" value="delete"/>
                         <input type="submit" value="Delete" class="button"/>
                     </form>
@@ -67,8 +65,162 @@
     </div>
 
 </div>
+
+<!-- Add this modal structure at the end of the body tag -->
+<div id="updatePostModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Update Post</h3>
+        <form id="updatePostForm" method="post">
+            <div class="form-group">
+                <label for="updateTitle">Title:</label>
+                <textarea id="updateTitle" name="title" placeholder="Edit your post title here"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="updateContent">Content:</label>
+                <textarea id="updateContent" name="content" placeholder="Edit your post content here"></textarea>
+            </div>
+            <div>
+                <button type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add this modal structure at the end of the body tag -->
+<div id="editCommentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Edit Comment</h3>
+        <form id="editCommentForm" method="post">
+            <div class="form-group">
+                <label for="editContent">Content:</label>
+                <textarea id="editContent" name="content" placeholder="Edit your comment here"></textarea>
+            </div>
+            <div>
+                <button type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <footer>
     <small>©️ Copyright 2024, CryptoHive</small>
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-comment-button');
+        const deleteCommentForms = document.querySelectorAll('.delete-comment-form');
+        const updatePostButton = document.querySelectorAll('.update-post-button');
+        const deletePostButton = document.querySelectorAll('.delete-post-button');
+        const commentModal = document.getElementById('editCommentModal');
+        const postModal = document.getElementById('updatePostModal');
+        const closeCommentModal = commentModal.querySelector('.close');
+        const closePostModal = postModal.querySelector('.close');
+        const editContent = commentModal.querySelector('#editContent');
+        const updateTitle = postModal.querySelector('#updateTitle');
+        const updateContent = postModal.querySelector('#updateContent');
+        const editForm = commentModal.querySelector('#editCommentForm');
+        const updateForm = postModal.querySelector('#updatePostForm');
+
+        fetch('/comments/current-user-id')
+            .then(response => response.json())
+            .then(currentUserId => {
+                fetch('/comments/current-user-roles')
+                    .then(response => response.json())
+                    .then(currentUserRoles => {
+                        const rolesMap = new Map(Object.entries(currentUserRoles));
+
+                        editButtons.forEach(button => {
+                            const commentCreatorId = button.getAttribute('data-creator-id');
+                            if (currentUserId == commentCreatorId) {
+                                button.style.display = 'inline';
+                            } else {
+                                button.style.display = 'none';
+                            }
+                        });
+
+                        deleteCommentForms.forEach(form => {
+                            const commentCreatorId = form.getAttribute('data-creator-id');
+                            if (currentUserId == commentCreatorId || rolesMap.get('isAdmin') || rolesMap.get('isModerator')) {
+                                form.style.display = 'inline';
+                            } else {
+                                form.style.display = 'none';
+                            }
+                        });
+
+                        updatePostButton.forEach(button => {
+                            const postCreatorId = button.getAttribute('data-creator-id');
+                            if (currentUserId == postCreatorId) {
+                                button.style.display = 'inline';
+                            } else {
+                                button.style.display = 'none';
+                            }
+                        });
+
+                        deletePostButton.forEach(button => {
+                            const postCreatorId = button.getAttribute('data-creator-id');
+                            if (currentUserId == postCreatorId || rolesMap.get('isAdmin') || rolesMap.get('isModerator')) {
+                                button.style.display = 'inline';
+                            } else {
+                                button.style.display = 'none';
+                            }
+                        });
+                    });
+            });
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const commentId = this.getAttribute('data-id');
+                const commentContent = this.getAttribute('data-content');
+
+                editContent.value = commentContent;
+                editForm.setAttribute('action', `/comments/${commentId}/update`);
+                commentModal.style.display = 'block';
+            });
+        });
+
+        updatePostButton.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const postId = this.getAttribute('data-id');
+                const postTitle = this.getAttribute('data-title');
+                const postContent = this.getAttribute('data-content');
+
+                updateTitle.value = postTitle;
+                updateContent.value = postContent;
+                updateForm.setAttribute('action', `/posts/${postId}/update`);
+                postModal.style.display = 'block';
+            });
+        });
+
+        closeCommentModal.addEventListener('click', function () {
+            commentModal.style.display = 'none';
+        });
+
+        closePostModal.addEventListener('click', function () {
+            postModal.style.display = 'none';
+        });
+
+        editForm.addEventListener('submit', function () {
+            commentModal.style.display = 'none';
+        });
+
+        updateForm.addEventListener('submit', function () {
+            postModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === commentModal) {
+                commentModal.style.display = 'none';
+            }
+            if (event.target === postModal) {
+                postModal.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>

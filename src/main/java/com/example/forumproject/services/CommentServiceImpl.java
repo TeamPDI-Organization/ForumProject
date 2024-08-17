@@ -39,7 +39,6 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public Comment update(Comment comment, User user) {
-        checkIfUpdaterIsSameAsCreator(user, comment);
         return commentRepository.update(comment);
     }
 

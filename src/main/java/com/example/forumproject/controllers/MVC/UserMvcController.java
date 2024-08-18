@@ -1,7 +1,11 @@
 package com.example.forumproject.controllers.MVC;
 
 import com.example.forumproject.exceptions.AuthorizationException;
+import com.example.forumproject.exceptions.EntityDuplicateException;
+import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
+import com.example.forumproject.helpers.UpdateUserMapper;
+import com.example.forumproject.models.UpdateUserDto;
 import com.example.forumproject.models.User;
 import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.models.UserFilterOptionsDto;
@@ -10,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -23,9 +28,12 @@ public class UserMvcController {
 
     private final AuthenticationHelper authenticationHelper;
 
-    public UserMvcController(UserService userService, AuthenticationHelper authenticationHelper) {
+    private final UpdateUserMapper updateUserMapper;
+
+    public UserMvcController(UserService userService, AuthenticationHelper authenticationHelper, UpdateUserMapper updateUserMapper) {
         this.userService = userService;
         this.authenticationHelper = authenticationHelper;
+        this.updateUserMapper = updateUserMapper;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -34,7 +42,7 @@ public class UserMvcController {
     }
 
     @GetMapping("/admin")
-    public String getAllUsers(@ModelAttribute("userFilterOptions")UserFilterOptionsDto userFilterOptionsDto,
+    public String getAllUsers(@ModelAttribute("userFilterOptions") UserFilterOptionsDto userFilterOptionsDto,
                               Model model,
                               HttpSession session) {
 
@@ -62,13 +70,17 @@ public class UserMvcController {
     @GetMapping("/{id}/view")
     public String showUserById(@PathVariable int id, Model model, HttpSession session) {
         try {
-            User user = authenticationHelper.tryGetCurrentUser(session);
-            if (user.isAdmin()) {
-                model.addAttribute("user", userService.getById(id));
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            if (currentUser.isAdmin()) {
+                User user = userService.getById(id);
+                model.addAttribute("user", user);
                 return "SingleUserView";
             }
-            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
-            return "error-view";
+
+            model.addAttribute("user", currentUser);
+
+            return "SingleUserView";
+
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
@@ -78,11 +90,9 @@ public class UserMvcController {
     public String deleteUser(@PathVariable int id, HttpSession session) {
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);
-            if (user.isAdmin()) {
-                userService.delete(id, user);
-                return "redirect:/users/admin";
-            }
-            return "error-view";
+            userService.delete(user.getId(), user);
+            return "redirect:/";
+
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }
@@ -90,30 +100,47 @@ public class UserMvcController {
 
     @GetMapping("/{id}/update")
     public String showUpdateUser(@PathVariable int id, Model model, HttpSession session) {
+
+
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);
-            if (user.isAdmin()) {
-                model.addAttribute("user", userService.getById(id));
-                return "UserUpdate";
-            }
-            return "error-view";
+
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
+        }
+
+        try {
+            User user = userService.getById(id);
+            UpdateUserDto userDto = updateUserMapper.toDto(user);
+            model.addAttribute("user", userDto);
+
+            return "user-update";
+        } catch (EntityNotFoundException e) {
+            return "not-found";
         }
     }
 
     @PostMapping("/{id}/update")
-    public String updateUser(@PathVariable int id, @ModelAttribute("user") User user, HttpSession session) {
+    public String updateUser(@PathVariable int id, @ModelAttribute("user")UpdateUserDto userDto,
+                             BindingResult errors ,HttpSession session) {
+
         try {
-            User currentUser = authenticationHelper.tryGetCurrentUser(session);
-            try {
-                userService.update(user, currentUser);
-                return "redirect:/users/%d/view".formatted(id);
-            } catch (AuthorizationException f) {
-                return "error-view";
-            }
+            User user = authenticationHelper.tryGetCurrentUser(session);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
+        }
+
+        if (errors.hasErrors()) {
+            return "user-update";
+        }
+
+        try {
+            User user = updateUserMapper.fromDto(id, userDto);
+            userService.update(user, user);
+
+            return "redirect:/users/%d/view".formatted(user.getId());
+        } catch (AuthorizationException e) {
+            return "error-view";
         }
     }
 }

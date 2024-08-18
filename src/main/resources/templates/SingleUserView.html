@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | User Panel</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+    <nav>
+        <ul th:replace="~{HomeView :: headButtons}"></ul>
+    </nav>
+    <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+    </nav>
+</header>
+<div class="user-frame">
+    <div>
+        <label th:text="#{user.label.username}">Username</label>
+        <p th:text="${user.username}"></p>
+    </div>
+    <div>
+        <label th:text="#{user.label.first-name}">First Name</label>
+        <p th:text="${user.firstName}"></p>
+    </div>
+    <div>
+        <label th:text="#{user.label.last-name}">Last Name</label>
+        <p th:text="${user.lastName}"></p>
+    </div>
+    <div>
+        <label th:text="#{user.label.email}">Email</label>
+        <p th:text="${user.email}"></p>
+    </div>
+    <div th:if="${user.admin}">
+        <label th:text="#{user.label.phonenumber}">Phone Number</label>
+        <p th:text="${phoneNumber.getPhoneNumber()}"></p>
+    </div>
+</div>
+</body>
+</html>

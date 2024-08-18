@@ -37,9 +37,15 @@ public class HomeMvcController {
     }
 
     @GetMapping
-    public String showHomePage(Model model, PostFilterOptions filterOptions) {
+    public String showHomePage(Model model, PostFilterOptions filterOptions, HttpSession session) {
         model.addAttribute("userCount", userService.getUsers().size());
         model.addAttribute("postCount", postService.getPosts(filterOptions).size());
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", user);
+        } catch (AuthorizationException e) {
+            return "HomeView";
+        }
 
         return "HomeView";
     }

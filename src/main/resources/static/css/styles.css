@@ -307,6 +307,45 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     padding: 0 10px;
 }
 
+.admin-users-view .user h2 a {
+    color: darkorange; /* Match the primary color of the application */
+    text-decoration: none;
+}
+
+.admin-users-view .user h2 a:hover {
+    text-decoration: underline;
+}
+
+.user-frame {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    width: 50%; /* Further reduced width */
+    margin: 20px auto; /* Centered with more margin */
+    color: white;
+}
+
+.user-frame div {
+    margin-bottom: 10px;
+}
+
+.user-frame label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user-frame p {
+    background-color: white;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%; /* Reduced width of fields */
+    margin: 0 auto; /* Centered fields */
+}
+
 .login-frame, .registration-frame {
     border: 2px solid white;
     padding: 20px;

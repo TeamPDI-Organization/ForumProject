@@ -5,10 +5,7 @@ import com.example.forumproject.exceptions.EntityDuplicateException;
 import com.example.forumproject.exceptions.EntityNotFoundException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.UpdateUserMapper;
-import com.example.forumproject.models.UpdateUserDto;
-import com.example.forumproject.models.User;
-import com.example.forumproject.models.UserFilterOptions;
-import com.example.forumproject.models.UserFilterOptionsDto;
+import com.example.forumproject.models.*;
 import com.example.forumproject.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -70,14 +67,15 @@ public class UserMvcController {
     @GetMapping("/{id}/view")
     public String showUserById(@PathVariable int id, Model model, HttpSession session) {
         try {
-            User currentUser = authenticationHelper.tryGetCurrentUser(session);
-            if (currentUser.isAdmin()) {
-                User user = userService.getById(id);
-                model.addAttribute("user", user);
-                return "SingleUserView";
-            }
+            authenticationHelper.tryGetCurrentUser(session);
 
-            model.addAttribute("user", currentUser);
+            User user = userService.getById(id);
+            model.addAttribute("user", user);
+
+            if (user.isAdmin()) {
+                PhoneNumber phoneNumber = userService.getPhoneNumber(user.getId());
+                model.addAttribute("phoneNumber", phoneNumber);
+            }
 
             return "SingleUserView";
 
@@ -121,8 +119,8 @@ public class UserMvcController {
     }
 
     @PostMapping("/{id}/update")
-    public String updateUser(@PathVariable int id, @ModelAttribute("user")UpdateUserDto userDto,
-                             BindingResult errors ,HttpSession session) {
+    public String updateUser(@PathVariable int id, @ModelAttribute("user") UpdateUserDto userDto,
+                             BindingResult errors, HttpSession session) {
 
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);

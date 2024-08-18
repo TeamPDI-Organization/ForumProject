@@ -33,7 +33,7 @@
     <br/><br/>
     <div class="user-container">
         <div th:each="user : ${users}" class="user">
-            <h2 th:text="${user.username}"></h2>
+            <h2><a th:href="@{/users/{id}/view(id=${user.id})}" th:text="${user.username}"></a></h2>
             <p th:text="${user.email}"></p>
             <p th:text="${user.firstName}"></p>
         </div>

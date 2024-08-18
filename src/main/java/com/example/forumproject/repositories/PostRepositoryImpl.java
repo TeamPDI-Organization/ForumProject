@@ -37,6 +37,11 @@ public class PostRepositoryImpl implements PostRepository {
                 params.put("title", String.format("%%%s%%", value));
             });
 
+            postFilterOptions.getContent().ifPresent(value -> {
+                filters.add(" content like :content ");
+                params.put("content", String.format("%%%s%%", value));
+            });
+
 
             if (!filters.isEmpty()) {
                 queryBuilder.append(" WHERE ")

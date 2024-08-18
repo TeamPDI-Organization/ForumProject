@@ -65,6 +65,7 @@ public class PostMvcController {
                                Model model, HttpSession session) {
         PostFilterOptions filterOptions = new PostFilterOptions(
                 filterOptionsDto.getTitle(),
+                filterOptionsDto.getContent(),
                 filterOptionsDto.getSortBy(),
                 filterOptionsDto.getSortOrder());
 

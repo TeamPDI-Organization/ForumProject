@@ -40,9 +40,10 @@ public class PostController {
 
     @GetMapping
     public List<Post> getPosts(@RequestParam(required = false) String title,
+                               @RequestParam(required = false) String content,
                                @RequestParam(required = false) String sortBy,
                                @RequestParam(required = false) String sortOrder) {
-        PostFilterOptions postFilterOptions = new PostFilterOptions(title, sortBy, sortOrder);
+        PostFilterOptions postFilterOptions = new PostFilterOptions(title, content, sortBy, sortOrder);
 
         return service.getPosts(postFilterOptions);
     }

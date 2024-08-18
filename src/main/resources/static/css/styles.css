@@ -158,7 +158,7 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
 }
 
-.post-sort-tab {
+.post-sort-tab, .users-sort-tab {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -171,7 +171,8 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
 
 .post-sort-tab input[type="text"],
 .post-sort-tab select,
-.post-sort-tab input[type="submit"] {
+.post-sort-tab input[type="submit"],
+.users-sort-tab input[type="text"] {
     margin-right: 10px;
     padding: 5px;
     border: 1px solid #ccc;
@@ -181,7 +182,8 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     cursor: pointer;
 }
 
-.post-sort-tab input[type="submit"] {
+.post-sort-tab input[type="submit"],
+.post-sort-tab input[type="submit"]{
     padding: 5px 10px;
     background-color: white;
     color: black;
@@ -190,12 +192,14 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     cursor: pointer;
 }
 
+.post-sort-tab input[type="submit"]:hover,
 .post-sort-tab input[type="submit"]:hover {
     background-color: darkorange;
     color: black;
 }
 
-.post-feed {
+.post-feed,
+.admin-users-view{
     margin-top: 120px;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.3);
@@ -206,7 +210,8 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
 }
 
-.post-header {
+.post-header,
+.users-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -273,6 +278,33 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
 
 .post-actions a:hover {
     text-decoration: underline;
+}
+
+.user-container {
+    max-height: 550px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    height: 600px;
+    width: 900px;
+}
+
+.user h2, .user p {
+    color: black;
+    margin: 0;
+    padding: 0 10px;
 }
 
 .login-frame, .registration-frame {

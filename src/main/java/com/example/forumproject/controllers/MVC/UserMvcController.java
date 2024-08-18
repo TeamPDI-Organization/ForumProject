@@ -10,9 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,5 +56,34 @@ public class UserMvcController {
             return "redirect:/auth/login";
         }
 
+    }
+
+    @GetMapping("/{id}/view")
+    public String showUserById(@PathVariable int id, Model model, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            if (user.isAdmin()) {
+                model.addAttribute("user", userService.getById(id));
+                return "SingleUserView";
+            }
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            return "error-view";
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteUser(@PathVariable int id, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            if (user.isAdmin()) {
+                userService.delete(id, user);
+                return "redirect:/users/admin";
+            }
+            return "error-view";
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
     }
 }

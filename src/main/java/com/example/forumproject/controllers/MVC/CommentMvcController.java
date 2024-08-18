@@ -4,20 +4,15 @@ import com.example.forumproject.exceptions.AuthorizationException;
 import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.helpers.CommentMapper;
 import com.example.forumproject.helpers.PostMapper;
-import com.example.forumproject.models.Comment;
-import com.example.forumproject.models.CommentDto;
 import com.example.forumproject.models.User;
 import com.example.forumproject.services.CommentService;
 import com.example.forumproject.services.PostService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/comments")
@@ -42,7 +37,7 @@ public class CommentMvcController {
         this.postMapper = postMapper;
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping ("/{id}/delete")
     public String deleteComment(@PathVariable int id, HttpSession session) {
         User user;
         try {

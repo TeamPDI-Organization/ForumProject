@@ -55,12 +55,9 @@ public class CommentServiceImpl implements CommentService{
     }
 
     public boolean checkIfUserIsAdminOrModerator(User user){
-        if (user.isAdmin()){
-            return true;
-        } else if (user.isModerator()) {
-            return true;
+        if (!(user.isAdmin() || user.isModerator())) {
+            return false;
         }
-
-        return false;
+        return true;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @Controller
@@ -82,6 +83,35 @@ public class UserMvcController {
                 return "redirect:/users/admin";
             }
             return "error-view";
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @GetMapping("/{id}/update")
+    public String showUpdateUser(@PathVariable int id, Model model, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            if (user.isAdmin()) {
+                model.addAttribute("user", userService.getById(id));
+                return "UserUpdate";
+            }
+            return "error-view";
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/{id}/update")
+    public String updateUser(@PathVariable int id, @ModelAttribute("user") User user, HttpSession session) {
+        try {
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            try {
+                userService.update(user, currentUser);
+                return "redirect:/users/%d/view".formatted(id);
+            } catch (AuthorizationException f) {
+                return "error-view";
+            }
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }

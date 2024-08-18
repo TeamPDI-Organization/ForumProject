@@ -18,6 +18,23 @@
 <div class="post-feed">
     <div class="post-header">
         <h1 style="display: inline">Posts</h1>
+        <form class="post-sort-tab" th:if="${isAuthenticated}" action="#" th:action="@{__${requestURI}__}" th:object="${postFilterOptions}" method="get">
+
+            <input type="text" placeholder="title" th:field="*{title}"/>
+
+            <select th:field="*{sortBy}">
+                <option value="">Sort By</option>
+                <option value="title">Title</option>
+            </select>
+
+            <select th:field="*{sortOrder}">
+                <option value="">Sort Order</option>
+                <option value="ASC">Ascending</option>
+                <option value="DESC">Descending</option>
+            </select>
+            <input type="submit" value="filter">
+
+        </form>
         <a th:if="${isAuthenticated}" th:href="@{/posts/new}" class="new-post-button" style="display: inline">New Post</a>
     </div>
     <br/><br/>

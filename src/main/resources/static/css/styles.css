@@ -158,6 +158,43 @@ header button:hover, header input[type="submit"]:hover, .header-buttons button:h
     box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
 }
 
+.post-sort-tab {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.post-sort-tab input[type="text"],
+.post-sort-tab select,
+.post-sort-tab input[type="submit"] {
+    margin-right: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+
+.post-sort-tab input[type="submit"] {
+    padding: 5px 10px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.post-sort-tab input[type="submit"]:hover {
+    background-color: darkorange;
+    color: black;
+}
+
 .post-feed {
     margin-top: 120px;
     padding: 20px;

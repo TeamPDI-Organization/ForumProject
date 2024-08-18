@@ -30,7 +30,8 @@ public class PostController {
     private final AuthenticationHelper authenticationHelper;
 
     @Autowired
-    public PostController(PostService service, CommentService commentService, PostMapper postMapper, AuthenticationHelper authenticationHelper) {
+    public PostController(PostService service, CommentService commentService,
+                          PostMapper postMapper, AuthenticationHelper authenticationHelper) {
         this.service = service;
         this.commentService = commentService;
         this.postMapper = postMapper;

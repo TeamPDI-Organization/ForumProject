@@ -37,6 +37,7 @@ public class PostRepositoryImpl implements PostRepository {
                 params.put("title", String.format("%%%s%%", value));
             });
 
+
             if (!filters.isEmpty()) {
                 queryBuilder.append(" WHERE ")
                         .append(String.join("AND", filters));
@@ -57,9 +58,8 @@ public class PostRepositoryImpl implements PostRepository {
                 case "title":
                     orderBy = "title";
                     break;
-                case "likes":
-                    orderBy = "likes";
-                    break;
+                default:
+                    return orderBy;
             }
             orderBy = String.format(" order by %s", orderBy);
 

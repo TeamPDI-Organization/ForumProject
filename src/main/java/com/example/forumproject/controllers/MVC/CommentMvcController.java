@@ -53,9 +53,9 @@ public class CommentMvcController {
 
         try {
             commentService.deleteComment(commentService.getCommentById(id), user);
-            return "redirect:/";
+            return "redirect:/posts/%d".formatted(commentService.getCommentById(id).getPost().getId());
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "error-view";
         }
     }
 
@@ -75,7 +75,7 @@ public class CommentMvcController {
             model.addAttribute("comment", commentDto);
             return "comment-update";
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "error-view";
         }
     }
 
@@ -101,7 +101,7 @@ public class CommentMvcController {
             commentService.update(comment, user);
             return "redirect:/posts/%d".formatted(comment.getPost().getId());
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "error-view";
         }
     }
 

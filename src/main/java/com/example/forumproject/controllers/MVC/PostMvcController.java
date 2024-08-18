@@ -61,15 +61,24 @@ public class PostMvcController {
     }
 
     @GetMapping()
-    public String showAllPosts(PostFilterOptions filterOptions, Model model, HttpSession session) {
-        List<Post> posts;
+    public String showAllPosts(@ModelAttribute("postFilterOptions") PostFilterOptionsDto filterOptionsDto,
+                               Model model, HttpSession session) {
+        PostFilterOptions filterOptions = new PostFilterOptions(
+                filterOptionsDto.getTitle(),
+                filterOptionsDto.getSortBy(),
+                filterOptionsDto.getSortOrder());
 
-        if (populateIsAuthenticated(session)) {
-            posts = postService.getPosts(filterOptions);
-        } else {
-            posts = postService.getRecentPosts();
+        try {
+            authenticationHelper.tryGetCurrentUser(session);
+        } catch (AuthorizationException e) {
+            List<Post> post = postService.getRecentPosts();
+            model.addAttribute("posts", post);
+
+            return "PostsView";
         }
 
+        model.addAttribute("postFilterOptions", filterOptionsDto);
+        List<Post> posts = postService.getPosts(filterOptions);
         model.addAttribute("posts", posts);
 
         return "PostsView";
@@ -167,7 +176,7 @@ public class PostMvcController {
             errors.rejectValue("title", "duplicate", "Post with this title already exists");
             return "post-update";
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "error-view";
         }
     }
 
@@ -187,7 +196,7 @@ public class PostMvcController {
         } catch (EntityNotFoundException e) {
             return "not-found";
         } catch (AuthorizationException e) {
-            return "unauthorized-user";
+            return "error-view";
         }
     }
 

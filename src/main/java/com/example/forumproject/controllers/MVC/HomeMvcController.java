@@ -1,9 +1,14 @@
 package com.example.forumproject.controllers.MVC;
 
+import com.example.forumproject.exceptions.AuthorizationException;
+import com.example.forumproject.helpers.AuthenticationHelper;
 import com.example.forumproject.models.PostFilterOptions;
+import com.example.forumproject.models.User;
+import com.example.forumproject.models.UserFilterOptions;
 import com.example.forumproject.services.PostService;
 import com.example.forumproject.services.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +23,12 @@ public class HomeMvcController {
 
     private final PostService postService;
 
-    public HomeMvcController(UserService userService, PostService postService) {
+    private final AuthenticationHelper authenticationHelper;
+
+    public HomeMvcController(UserService userService, PostService postService, AuthenticationHelper authenticationHelper) {
         this.userService = userService;
         this.postService = postService;
+        this.authenticationHelper = authenticationHelper;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -40,4 +48,5 @@ public class HomeMvcController {
     public String about() {
         return "AboutView";
     }
+
 }

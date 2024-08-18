@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>CryptoHive | Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="../static/css/styles.css"/>
+</head>
+<body>
+<header>
+    <nav>
+        <ul th:replace="~{HomeView :: headButtons}"></ul>
+    </nav>
+    <nav>
+        <ul th:replace="~{HomeView :: authButtons}"></ul>
+    </nav>
+</header>
+<div class="admin-users-view">
+    <div class="users-header">
+        <h1 style="display: inline">Users</h1>
+        <form class="users-sort-tab" action="#" th:action="@{__${requestURI}__}" th:object="${userFilterOptions}" method="get">
+
+            <input type="text" placeholder="username" th:field="*{username}"/>
+
+            <input type="text" placeholder="email" th:field="*{email}"/>
+
+            <input type="text" placeholder="firstName" th:field="*{firstName}"/>
+
+
+            <input type="submit" value="filter">
+
+        </form>
+    </div>
+    <br/><br/>
+    <div class="user-container">
+        <div th:each="user : ${users}" class="user">
+            <h2 th:text="${user.username}"></h2>
+            <p th:text="${user.email}"></p>
+            <p th:text="${user.firstName}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

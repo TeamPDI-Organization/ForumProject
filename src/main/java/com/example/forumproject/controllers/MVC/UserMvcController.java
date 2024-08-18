@@ -29,6 +29,11 @@ public class UserMvcController {
         this.authenticationHelper = authenticationHelper;
     }
 
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+        return session.getAttribute("currentUser") != null;
+    }
+
     @GetMapping("/admin")
     public String getAllUsers(@ModelAttribute("userFilterOptions")UserFilterOptionsDto userFilterOptionsDto,
                               Model model,

@@ -12,7 +12,7 @@
             <li><a th:href="@{/}">CryptoHive</a></li>
             <li><a th:href="@{/posts}">Posts</a></li>
             <li><a th:href="@{/about}">About</a></li>
-            <li><a th:if="${isAuthenticated && session.isAdmin}" th:href="@{/users/admin}">Admin Panel</a></li>
+            <li><a th:if="${isAuthenticated}" th:href="@{/users/admin}">Admin Panel</a></li>
         </ul>
     </nav>
     <nav>

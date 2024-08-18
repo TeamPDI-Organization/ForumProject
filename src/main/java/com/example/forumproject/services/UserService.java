@@ -32,8 +32,4 @@ public interface UserService {
     PhoneNumber getPhoneNumber(int userId);
 
     User makeModerator(int userId);
-
-    void updateProfilePicture(int userId, MultipartFile file);
-
-    byte[] getProfilePicture(int userId);
 }

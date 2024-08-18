@@ -201,23 +201,4 @@ public class UserController {
 
         return userService.searchUsers(options);
     }
-
-    @PostMapping("/profile-picture")
-    public ResponseEntity<Void> uploadProfilePicture(@RequestHeader HttpHeaders headers,
-                                                     @RequestParam("file") MultipartFile file) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            userService.updateProfilePicture(user.getId(), file);
-
-            return ResponseEntity.ok().build();
-        } catch (FileLimitationsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
-
-    @GetMapping("/{userId}/profile-picture")
-    public ResponseEntity<byte[]> getProfilePicture(@Valid @PathVariable int userId) {
-        byte[] image = userService.getProfilePicture(userId);
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
-    }
 }

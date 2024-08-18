@@ -35,6 +35,87 @@
         <label th:text="#{user.label.phonenumber}">Phone Number</label>
         <p th:text="${phoneNumber.getPhoneNumber()}"></p>
     </div>
-</div>
+    <div class="user-update-button" th:if="${currentUser.id == user.id}">
+        <button class="button" id="updateUserButton" type="button">Update User</button>
+    </div>
+    <div class="delete-user-button" th:if="${currentUser.id == user.id}">
+        <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
+            <input type="hidden" name="_method" value="delete"/>
+            <input type="submit" value="Delete User" class="button"/>
+        </form>
+    </div>
+    <div class="make-moderator-button" th:if="${session.isAdmin}">
+        <form th:action="@{/users/{id}/make-moderator(id=${user.id})}" method="post">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="submit" value="Promote" class="button"/>
+        </form>
+    </div>
+    <div class="block-user-button" th:if="${session.isAdmin}">
+        <form th:action="@{/users/{id}/block-user(id=${user.id})}" method="post" th:if="${!user.blocked}">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="submit" value="Block" class="button"/>
+        </form>
+        <form th:action="@{/users/{id}/unblock-user(id=${user.id})}" method="post" th:if="${user.blocked}">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="submit" value="Unblock" class="button"/>
+        </form>
+    </div>
+
+    <div id="updateUserModal" class="update-user-modal">
+        <div class="update-user-modal-content">
+            <span class="close">&times;</span>
+            <h3>Update User</h3>
+            <form id="updateUserForm" method="post" th:action="@{/users/{id}/update(id=${user.id})}">
+                <div class="form-group">
+                    <label for="updateFirstName">First Name:</label>
+                    <input type="text" id="updateFirstName" name="firstName" th:value="${user.firstName}"
+                           placeholder="Edit your first name here"/>
+                </div>
+                <div class="form-group">
+                    <label for="updateLastName">Last Name:</label>
+                    <input type="text" id="updateLastName" name="lastName" th:value="${user.lastName}"
+                           placeholder="Edit your last name here"/>
+                </div>
+                <div class="form-group">
+                    <label for="updateEmail">Email:</label>
+                    <input type="email" id="updateEmail" name="email" th:value="${user.email}"
+                           placeholder="Edit your email here"/>
+                </div>
+                <div class="form-group">
+                    <label for="updatePassword">Password:</label>
+                    <input type="password" id="updatePassword" name="password" placeholder="Edit your password here"/>
+                </div>
+                <div>
+                    <button type="submit">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const updateUserButton = document.getElementById('updateUserButton');
+            const updateUserModal = document.getElementById('updateUserModal');
+            const closeUpdateUserModal = updateUserModal.querySelector('.close');
+            const updateUserForm = updateUserModal.querySelector('#updateUserForm');
+
+            updateUserButton.addEventListener('click', function () {
+                updateUserModal.style.display = 'block';
+            });
+
+            closeUpdateUserModal.addEventListener('click', function () {
+                updateUserModal.style.display = 'none';
+            });
+
+            updateUserForm.addEventListener('submit', function () {
+                updateUserModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target === updateUserModal) {
+                    updateUserModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

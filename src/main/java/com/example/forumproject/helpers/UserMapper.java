@@ -37,6 +37,7 @@ public class UserMapper {
         user.setEmail(dto.getEmail());
         user.setAdmin(false);
         user.setModerator(false);
+        user.setActive(true);
 
         return user;
     }

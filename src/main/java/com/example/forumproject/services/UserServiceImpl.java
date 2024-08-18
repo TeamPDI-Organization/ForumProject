@@ -132,25 +132,5 @@ public class UserServiceImpl implements UserService{
         return userRepository.makeModerator(userId);
     }
 
-    @Override
-    public void updateProfilePicture(int userId, MultipartFile file) {
-        try {
-            User user = userRepository.getById(userId);
-            user.setProfilePicture(file.getBytes());
-        } catch (IOException e) {
-            throw new FileLimitationsException("Profile picture doesn't match the requirements.");
-        }
-    }
-
-    @Override
-    public byte[] getProfilePicture(int userId) {
-        try {
-            User user = userRepository.getById(userId);
-            return user.getProfilePicture();
-
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("User", userId);
-        }
-    }
 
 }

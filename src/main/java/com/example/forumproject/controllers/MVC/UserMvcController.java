@@ -50,6 +50,7 @@ public class UserMvcController {
 
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", user);
             if (user.isAdmin()) {
                 model.addAttribute("userFilterOptions", userFilterOptionsDto);
                 List<User> users = userService.searchUsers(userFilterOptions);
@@ -67,7 +68,8 @@ public class UserMvcController {
     @GetMapping("/{id}/view")
     public String showUserById(@PathVariable int id, Model model, HttpSession session) {
         try {
-            authenticationHelper.tryGetCurrentUser(session);
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", currentUser);
 
             User user = userService.getById(id);
             model.addAttribute("user", user);
@@ -88,7 +90,7 @@ public class UserMvcController {
     public String deleteUser(@PathVariable int id, HttpSession session) {
         try {
             User user = authenticationHelper.tryGetCurrentUser(session);
-            userService.delete(user.getId(), user);
+            userService.delete(id, user);
             return "redirect:/";
 
         } catch (AuthorizationException e) {
@@ -139,6 +141,39 @@ public class UserMvcController {
             return "redirect:/users/%d/view".formatted(user.getId());
         } catch (AuthorizationException e) {
             return "error-view";
+        }
+    }
+
+    @PostMapping("/{id}/make-moderator")
+    public String makeModerator(@PathVariable int id, HttpSession session) {
+        try {
+            authenticationHelper.tryGetCurrentUser(session);
+            userService.makeModerator(id);
+            return "redirect:/users/%d/view".formatted(id);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/{id}/block-user")
+    public String blockUser(@PathVariable int id, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            userService.blockUser(id,user);
+            return "redirect:/users/%d/view".formatted(id);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
+    @PostMapping("/{id}/unblock-user")
+    public String unblockUser(@PathVariable int id, HttpSession session) {
+        try {
+            User user = authenticationHelper.tryGetCurrentUser(session);
+            userService.unblockUser(id,user);
+            return "redirect:/users/%d/view".formatted(id);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
         }
     }
 }

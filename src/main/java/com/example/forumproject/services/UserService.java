@@ -32,4 +32,6 @@ public interface UserService {
     PhoneNumber getPhoneNumber(int userId);
 
     User makeModerator(int userId);
+
+    User removeModerator(int userId);
 }

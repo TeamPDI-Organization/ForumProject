@@ -101,16 +101,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void like(Post post, User user) {
-        if (post.getLikes().contains(user)) {
-            post.getLikes().remove(user);
-            user.getLikedPosts().remove(post);
+        User userFromDb = userService.getById(user.getId());
+        Post postFromDb = postRepository.getPostById(post.getId());
+
+        if (postFromDb.getLikes().contains(userFromDb)) {
+            postFromDb.getLikes().remove(userFromDb);
+            userFromDb.getLikedPosts().remove(postFromDb);
         } else {
-            post.getLikes().add(user);
-            user.getLikedPosts().add(post);
+            postFromDb.getLikes().add(userFromDb);
+            userFromDb.getLikedPosts().add(postFromDb);
         }
 
-        postRepository.update(post);
-        userService.update(user, user);
+        postRepository.update(postFromDb);
+        userService.update(userFromDb, userFromDb);
     }
 
     @Override

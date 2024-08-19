@@ -132,5 +132,10 @@ public class UserServiceImpl implements UserService{
         return userRepository.makeModerator(userId);
     }
 
+    @Override
+    public User removeModerator(int userId) {
+        return userRepository.removeModerator(userId);
+    }
+
 
 }

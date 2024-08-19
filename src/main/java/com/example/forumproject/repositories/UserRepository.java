@@ -28,4 +28,6 @@ public interface UserRepository {
     PhoneNumber getPhoneNumber(int userId);
 
     User makeModerator(int userId);
+
+    User removeModerator(int userId);
 }

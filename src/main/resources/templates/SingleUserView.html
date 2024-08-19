@@ -45,10 +45,15 @@
         </form>
     </div>
     <div class="make-moderator-button" th:if="${session.isAdmin && currentUser.id != user.id}">
-        <form th:action="@{/users/{id}/make-moderator(id=${user.id})}" method="post">
+        <form th:action="@{/users/{id}/make-moderator(id=${user.id})}" method="post" th:if="${!user.isModerator()}">
             <input type="hidden" name="_method" value="put"/>
             <input type="submit" value="Promote" class="button"/>
         </form>
+        <form th:action="@{/users/{id}/remove-moderator(id=${user.id})}" method="post" th:if="${user.isModerator()}">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="submit" value="Demote" class="button"/>
+        </form>
+
     </div>
     <div class="block-user-button" th:if="${session.isAdmin && currentUser.id != user.id}">
         <form th:action="@{/users/{id}/block-user(id=${user.id})}" method="post" th:if="${!user.blocked}">

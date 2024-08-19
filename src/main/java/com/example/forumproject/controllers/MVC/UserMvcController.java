@@ -155,6 +155,17 @@ public class UserMvcController {
         }
     }
 
+    @PostMapping("/{id}/remove-moderator")
+    public String removeModerator(@PathVariable int id, HttpSession session) {
+        try {
+            authenticationHelper.tryGetCurrentUser(session);
+            userService.removeModerator(id);
+            return "redirect:/users/%d/view".formatted(id);
+        } catch (AuthorizationException e) {
+            return "redirect:/auth/login";
+        }
+    }
+
     @PostMapping("/{id}/block-user")
     public String blockUser(@PathVariable int id, HttpSession session) {
         try {

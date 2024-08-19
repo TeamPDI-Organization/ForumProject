@@ -51,7 +51,13 @@ public class HomeMvcController {
     }
 
     @GetMapping("/about")
-    public String about() {
+    public String about(Model model, HttpSession session) {
+        try {
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", currentUser);
+        } catch (AuthorizationException e) {
+            return "AboutView";
+        }
         return "AboutView";
     }
 

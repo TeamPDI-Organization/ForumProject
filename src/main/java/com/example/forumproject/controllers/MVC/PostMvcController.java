@@ -48,8 +48,10 @@ public class PostMvcController {
     }
 
     @GetMapping("/{id}")
-    public String showPost(@PathVariable int id, Model model) {
+    public String showPost(@PathVariable int id, Model model, HttpSession session) {
         try {
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", currentUser);
             Post post = postService.getPostById(id);
             model.addAttribute("post", post);
             model.addAttribute("comment", new CommentDto());
@@ -70,7 +72,8 @@ public class PostMvcController {
                 filterOptionsDto.getSortOrder());
 
         try {
-            authenticationHelper.tryGetCurrentUser(session);
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", currentUser);
         } catch (AuthorizationException e) {
             List<Post> post = postService.getRecentPosts();
             model.addAttribute("posts", post);

@@ -44,13 +44,13 @@
             <input type="submit" value="Delete User" class="button"/>
         </form>
     </div>
-    <div class="make-moderator-button" th:if="${session.isAdmin}">
+    <div class="make-moderator-button" th:if="${session.isAdmin && currentUser.id != user.id}">
         <form th:action="@{/users/{id}/make-moderator(id=${user.id})}" method="post">
             <input type="hidden" name="_method" value="put"/>
             <input type="submit" value="Promote" class="button"/>
         </form>
     </div>
-    <div class="block-user-button" th:if="${session.isAdmin}">
+    <div class="block-user-button" th:if="${session.isAdmin && currentUser.id != user.id}">
         <form th:action="@{/users/{id}/block-user(id=${user.id})}" method="post" th:if="${!user.blocked}">
             <input type="hidden" name="_method" value="put"/>
             <input type="submit" value="Block" class="button"/>

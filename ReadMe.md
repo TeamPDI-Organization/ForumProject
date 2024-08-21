@@ -4,6 +4,8 @@ This is a Spring Boot-based forum project.
 
 ## Getting Started
 
+## To insert the SQL script in the database first create a schema named "forum" then run the script in the db package.
+
 ### Prerequisites
 
 - Java 11 or higher

@@ -52,8 +52,9 @@ public class CommentMvcController {
         }
 
         try {
+            int postId = commentService.getCommentById(id).getPost().getId();
             commentService.deleteComment(commentService.getCommentById(id), user);
-            return "redirect:/posts/%d".formatted(commentService.getCommentById(id).getPost().getId());
+            return "redirect:/posts/%d".formatted(postId);
         } catch (AuthorizationException e) {
             return "error-view";
         }

@@ -44,9 +44,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void deleteComment(Comment comment, User user){
-        if (!(checkIfUpdaterIsSameAsCreator(user, comment) || checkIfUserIsAdminOrModerator(user))){
-            throw new AuthorizationException("You do not have permission to delete this comment");
-        }
+
         commentRepository.delete(comment);
     }
 

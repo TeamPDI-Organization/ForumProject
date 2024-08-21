@@ -98,7 +98,8 @@ public class PostMvcController {
     @GetMapping("/new")
     public String showNewPost(Model model, HttpSession session) {
         try {
-            authenticationHelper.tryGetCurrentUser(session);
+            User currentUser = authenticationHelper.tryGetCurrentUser(session);
+            model.addAttribute("currentUser", currentUser);
         } catch (AuthorizationException e) {
             return "redirect:/auth/login";
         }

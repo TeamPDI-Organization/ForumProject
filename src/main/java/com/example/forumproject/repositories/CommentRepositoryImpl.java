@@ -56,13 +56,13 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public Comment getCommentById(int commentId) {
+    public Comment getCommentById(int id) {
         try (Session session = sessionFactory.openSession()) {
             Query<Comment> query = session.createQuery("from Comment where id = :id", Comment.class);
-            query.setParameter("id", commentId);
+            query.setParameter("id", id);
             List<Comment> comments = query.list();
             if (comments == null) {
-                throw new EntityNotFoundException("Comment", commentId);
+                throw new EntityNotFoundException("Comment", id);
             }
             return comments.get(0);
         }
